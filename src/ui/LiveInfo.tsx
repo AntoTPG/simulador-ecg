@@ -27,11 +27,13 @@ export function PhaseBadge() {
   const sim = useSim((s) => s.sim);
   useEffect(() => {
     let last = '';
+    const lesion = norm(sim.params.stVector) > 0.02;
     return clock.subscribe((t) => {
       const k = segmentAt(sim, t)?.kind ?? 'TP';
       if (k === last || !ref.current) return;
       last = k;
-      ref.current.textContent = PHASE_TEXT[k];
+      ref.current.textContent =
+        k === 'ST' && lesion ? 'Segmento ST · la flecha es el VECTOR DE LESIÓN (ST desplazado)' : PHASE_TEXT[k];
       ref.current.style.borderColor = k === 'TP' ? 'var(--border)' : PHASE_COLORS[k];
     });
   }, [sim]);

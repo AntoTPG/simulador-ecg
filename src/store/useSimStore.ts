@@ -10,6 +10,8 @@ import type { LeadName } from '../config/leads';
 import { PHYSIOLOGY } from '../config/physiology';
 import { defaultParams } from '../engine/params';
 import { simulate, type SimResult } from '../engine/simulate';
+import { paramsForPathology } from '../engine/applyPathology';
+import { getPathology } from '../pathologies/registry';
 import { clock } from './clock';
 
 export type Layer =
@@ -31,7 +33,12 @@ interface SimState {
   heartRate: number;
   qrsAxis: number;
   pathologyId: string;
+  /** Nivel del deslizador de gravedad/fase de la patología. */
+  levelIndex: number;
   sim: SimResult;
+  /** Corazón sano con la misma FC y eje (para superponerlo). */
+  normalSim: SimResult;
+  compare: boolean;
 
   playing: boolean;
   speed: number;
@@ -51,6 +58,8 @@ interface SimState {
   setHeartRate: (hr: number) => void;
   setQrsAxis: (deg: number) => void;
   setPathology: (id: string) => void;
+  setLevel: (i: number) => void;
+  toggleCompare: () => void;
   togglePlay: () => void;
   setPlaying: (p: boolean) => void;
   setSpeed: (s: number) => void;
@@ -64,16 +73,36 @@ interface SimState {
   setMobileTab: (t: MobileTab) => void;
 }
 
-function buildSim(heartRate: number, qrsAxis: number): SimResult {
-  return simulate(defaultParams({ heartRate, qrsAxis }));
+interface SimInputs {
+  heartRate: number;
+  qrsAxis: number;
+  pathologyId: string;
+  levelIndex: number;
+}
+
+/** Simulación con la patología aplicada + la del corazón sano (para «comparar con normal»). */
+function buildSims({ heartRate, qrsAxis, pathologyId, levelIndex }: SimInputs) {
+  const base = defaultParams({ heartRate, qrsAxis });
+  const normalSim = simulate(base);
+  const p = getPathology(pathologyId);
+  const sim = p.id === 'normal' ? normalSim : simulate(paramsForPathology(base, p, levelIndex));
+  return { sim, normalSim };
 }
 
 /** Recalcula la simulación conservando la fase relativa del reloj. */
-function rebuild(get: () => SimState, heartRate: number, qrsAxis: number) {
-  const old = get().sim;
-  const sim = buildSim(heartRate, qrsAxis);
-  clock.seek((clock.t / old.duration) * sim.duration);
-  return sim;
+function rebuild(get: () => SimState, changes: Partial<SimInputs>) {
+  const s = get();
+  const inputs: SimInputs = {
+    heartRate: s.heartRate,
+    qrsAxis: s.qrsAxis,
+    pathologyId: s.pathologyId,
+    levelIndex: s.levelIndex,
+    ...changes,
+  };
+  const old = s.sim;
+  const sims = buildSims(inputs);
+  clock.seek((clock.t / old.duration) * sims.sim.duration);
+  return { ...changes, ...sims };
 }
 
 const initialTheme: Theme =
@@ -89,7 +118,9 @@ export const useSim = create<SimState>()((set, get) => ({
   heartRate: PHYSIOLOGY.heartRate,
   qrsAxis: PHYSIOLOGY.qrsAxis,
   pathologyId: 'normal',
-  sim: buildSim(PHYSIOLOGY.heartRate, PHYSIOLOGY.qrsAxis),
+  levelIndex: 0,
+  ...buildSims({ heartRate: PHYSIOLOGY.heartRate, qrsAxis: PHYSIOLOGY.qrsAxis, pathologyId: 'normal', levelIndex: 0 }),
+  compare: false,
 
   playing: true,
   speed: 0.25,
@@ -114,9 +145,17 @@ export const useSim = create<SimState>()((set, get) => ({
   ecgLayout: 'clasico',
   mobileTab: '3d',
 
-  setHeartRate: (heartRate) => set({ heartRate, sim: rebuild(get, heartRate, get().qrsAxis) }),
-  setQrsAxis: (qrsAxis) => set({ qrsAxis, sim: rebuild(get, get().heartRate, qrsAxis) }),
-  setPathology: (pathologyId) => set({ pathologyId }),
+  setHeartRate: (heartRate) => set(rebuild(get, { heartRate })),
+  setQrsAxis: (qrsAxis) => set(rebuild(get, { qrsAxis })),
+  setPathology: (pathologyId) => {
+    const p = getPathology(pathologyId);
+    set(rebuild(get, { pathologyId: p.id, levelIndex: p.control?.inicial ?? 0 }));
+    // Selecciona automáticamente la derivación más representativa
+    const first = p.derivacionesAfectadas[0];
+    if (first) set({ selectedLead: first });
+  },
+  setLevel: (levelIndex) => set(rebuild(get, { levelIndex })),
+  toggleCompare: () => set({ compare: !get().compare }),
   togglePlay: () => set({ playing: !get().playing }),
   setPlaying: (playing) => set({ playing }),
   setSpeed: (speed) => set({ speed }),

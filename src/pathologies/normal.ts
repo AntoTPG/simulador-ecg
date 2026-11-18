@@ -1,9 +1,10 @@
 /**
- * Ritmo sinusal normal. Sirve de referencia y de plantilla: en la fase 2 cada
- * patología será un archivo como este (datos puros validados con Zod) con las
- * modificaciones del vector y de los intervalos.
+ * Ritmo sinusal normal: la referencia. También sirve de PLANTILLA mínima de una
+ * patología (ver schema.ts para todos los campos posibles).
  */
-export const normal = {
+import { definePathology } from './schema';
+
+export default definePathology({
   id: 'normal',
   nombre: 'Normal — ritmo sinusal',
   categoria: 'Referencia',
@@ -13,4 +14,4 @@ export const normal = {
     'El haz de His y las ramas activan primero el tabique (de izquierda a derecha: q septal en V6, r en V1) y luego las paredes libres; como el VI tiene mucha más masa, el vector medio del QRS apunta abajo y a la izquierda (eje entre −30° y +90°).',
     'Durante el ST todas las células están en la meseta del potencial de acción, no hay diferencias de voltaje y el segmento es isoeléctrico. La repolarización (onda T) va del epicardio al endocardio, por eso la T es concordante con el QRS.',
   ],
-} as const;
+});

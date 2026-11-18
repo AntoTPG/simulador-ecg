@@ -4,8 +4,8 @@
  */
 import { PHYSIOLOGY, SIMULATION } from '../config/physiology';
 import type { Vec3 } from './math';
-import { NORMAL_WAVES } from './normalWaves';
-import type { Lobe, WaveKind } from './waves';
+import { NORMAL_QRS_AXIS, NORMAL_WAVES } from './normalWaves';
+import { rotateLobes, type Lobe, type WaveKind } from './waves';
 
 /** Tipo de ritmo. En la fase 1 solo el sinusal; el planificador ya admite más. */
 export type RhythmSpec = { kind: 'sinusal' };
@@ -31,19 +31,26 @@ export interface SimParams {
   targetDuration: number;
 }
 
+/**
+ * Parámetros del corazón sano. El EJE se aplica aquí, girando en el plano
+ * frontal los bucles QRS, T y U normales: así el eje medio del QRS coincide
+ * con `qrsAxis`. Lo hacemos ANTES de aplicar las patologías para que los
+ * vectores anatómicos que estas añaden (lesión, necrosis…) no giren con el eje.
+ */
 export function defaultParams(overrides: Partial<SimParams> = {}): SimParams {
+  const qrsAxis = overrides.qrsAxis ?? PHYSIOLOGY.qrsAxis;
+  const rot = qrsAxis - NORMAL_QRS_AXIS;
   return {
     heartRate: PHYSIOLOGY.heartRate,
     prInterval: PHYSIOLOGY.prInterval,
     pDuration: PHYSIOLOGY.pDuration,
     qrsDuration: PHYSIOLOGY.qrsDuration,
     qtc: PHYSIOLOGY.qtc,
-    qrsAxis: PHYSIOLOGY.qrsAxis,
     waves: {
       P: NORMAL_WAVES.P.map((l) => ({ ...l })),
-      QRS: NORMAL_WAVES.QRS.map((l) => ({ ...l })),
-      T: NORMAL_WAVES.T.map((l) => ({ ...l })),
-      U: NORMAL_WAVES.U.map((l) => ({ ...l })),
+      QRS: rotateLobes(NORMAL_WAVES.QRS, rot),
+      T: rotateLobes(NORMAL_WAVES.T, rot),
+      U: rotateLobes(NORMAL_WAVES.U, rot),
     },
     stVector: [0, 0, 0],
     prSegmentVector: [0, 0, 0],
@@ -51,6 +58,7 @@ export function defaultParams(overrides: Partial<SimParams> = {}): SimParams {
     sampleRate: SIMULATION.sampleRate,
     targetDuration: SIMULATION.targetDuration,
     ...overrides,
+    qrsAxis,
   };
 }
 

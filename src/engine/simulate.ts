@@ -11,10 +11,10 @@
  */
 import { computeLeads, type LeadSignals } from './leads';
 import { mod, skewGauss, smoothstep, type Vec3 } from './math';
-import { NORMAL_QRS_AXIS, U_WAVE } from './normalWaves';
+import { U_WAVE } from './normalWaves';
 import { qtFromQtc, type SimParams } from './params';
 import { scheduleRhythm, type Beat } from './rhythm';
-import { rotateLobes, waveExtent, type Lobe, type WaveKind } from './waves';
+import { waveExtent, type Lobe, type WaveKind } from './waves';
 
 export type SegmentKind = WaveKind | 'PR' | 'ST';
 
@@ -119,12 +119,10 @@ export function simulate(p: SimParams): SimResult {
     new Float32Array(n),
   ];
 
-  // EJE ELÉCTRICO: giramos QRS y T en el plano frontal para que el eje medio
-  // del QRS sea el configurado (la T acompaña al QRS: ángulo QRS‑T estrecho).
-  const rot = p.qrsAxis - NORMAL_QRS_AXIS;
-  const qrs = rotateLobes(p.waves.QRS, rot);
-  const tw = rotateLobes(p.waves.T, rot);
-  const uw = rotateLobes(p.waves.U, rot);
+  // (El eje ya viene aplicado en los lóbulos: ver defaultParams.)
+  const qrs = p.waves.QRS;
+  const tw = p.waves.T;
+  const uw = p.waves.U;
 
   const extP = extentOf(p.waves.P);
   const extQRS = extentOf(p.waves.QRS);

@@ -10,7 +10,9 @@ import { clock } from '../../store/clock';
 import { useSim } from '../../store/useSimStore';
 import { segmentAt } from '../../engine/simulate';
 import { CLIP_PLANES } from '../clipping';
-import { CONDUCTION, CORONARIES, LA, LV_CENTER, LV_PROFILE, RA, RV_CENTER, RV_FLATTEN, RV_PROFILE, RV_ROT_Y, VESSELS } from './anatomy';
+import { Coronaries } from './Coronaries';
+import { Territory } from './Territory';
+import { CONDUCTION, LA, LV_CENTER, LV_PROFILE, RA, RV_CENTER, RV_FLATTEN, RV_PROFILE, RV_ROT_Y, VESSELS } from './anatomy';
 
 const DEPOL = new Color('#ffcf4a'); // brillo de despolarización
 const REPOL = new Color('#6fb6ff'); // brillo de repolarización
@@ -48,7 +50,6 @@ export function ProceduralHeart() {
       pulmonar: new TubeGeometry(VESSELS.pulmonar.curve, 40, VESSELS.pulmonar.r, 20),
       vcs: new TubeGeometry(VESSELS.venaCavaSup.curve, 16, VESSELS.venaCavaSup.r, 16),
       vci: new TubeGeometry(VESSELS.venaCavaInf.curve, 16, VESSELS.venaCavaInf.r, 16),
-      coronaries: Object.entries(CORONARIES).map(([k, c]) => ({ k, g: new TubeGeometry(c.curve, 64, c.r, 10) })),
       his: new TubeGeometry(CONDUCTION.his, 12, 0.035, 8),
       internodal: new TubeGeometry(CONDUCTION.internodal, 16, 0.02, 6),
       ramaIzq: new TubeGeometry(CONDUCTION.ramaIzq, 24, 0.03, 8),
@@ -64,7 +65,6 @@ export function ProceduralHeart() {
   const aortaMat = useMat('#c94550');
   const pulmMat = useMat('#5875c4');
   const veinMat = useMat('#4a5fa8');
-  const coronaryMat = useMat('#ff4436', { emissive: new Color('#a01208'), emissiveIntensity: 0.5, transparent: false });
   const condMat = useMat('#ffe08a', { emissive: new Color('#ffcf4a'), emissiveIntensity: 0.2, transparent: false });
   const saMat = useMat('#ffe08a', { emissive: new Color('#ffcf4a'), emissiveIntensity: 0.2, transparent: false });
   const avMat = useMat('#ffe08a', { emissive: new Color('#ffcf4a'), emissiveIntensity: 0.2, transparent: false });
@@ -131,7 +131,8 @@ export function ProceduralHeart() {
       <mesh geometry={geo.vcs} material={veinMat} renderOrder={2} />
       <mesh geometry={geo.vci} material={veinMat} renderOrder={2} />
 
-      {layers.coronarias && geo.coronaries.map(({ k, g }) => <mesh key={k} geometry={g} material={coronaryMat} renderOrder={3} />)}
+      {layers.coronarias && <Coronaries />}
+      <Territory />
 
       {layers.conduccion && (
         <group>

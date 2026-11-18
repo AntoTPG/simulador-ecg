@@ -1,5 +1,7 @@
 # Simulador ECG 3D
 
+**🌐 Úsala online:** https://antotpg.github.io/simulador-ecg/
+
 Aplicación educativa para estudiantes de Medicina: muestra el **vector cardíaco en 3D** dentro de un corazón, los **ejes de las 12 derivaciones** a su alrededor y el **ECG de 12 derivaciones** sincronizado en papel milimetrado (25 mm/s, 10 mm/mV).
 
 > ⚠️ **Herramienta educativa y simplificada. No apta para uso clínico ni para diagnóstico.**
@@ -9,7 +11,7 @@ Aplicación educativa para estudiantes de Medicina: muestra el **vector cardíac
 | Fase | Contenido | Estado |
 |---|---|---|
 | 1 · MVP | Motor del dipolo, ECG normal de 12 derivaciones, corazón 3D con vector, bucles y ejes | ✅ |
-| 2 | Sistema de patologías (Zod), isquemias por arteria/fase, potasio, «comparar con normal» | ⏳ |
+| 2 | Sistema de patologías (Zod), isquemias por arteria/fase, potasio, «comparar con normal» | ✅ |
 | 3 | Resto de patologías, PWA instalable, pulido móvil, modelo glTF libre | ⏳ |
 
 ## Ejecutarla en tu ordenador
@@ -44,7 +46,7 @@ Hay dos opciones:
    ```
    Sube la carpeta `dist/` a cualquier hosting estático:
    - **Netlify Drop**: arrastra `dist/` a https://app.netlify.com/drop.
-   - **GitHub Pages**: sube el repositorio y publica `dist/` (por ejemplo, con la acción `actions/deploy-pages`).
+   - **GitHub Pages** (lo que usa este repositorio): cada `git push` a `main` ejecuta `.github/workflows/deploy.yml`, que pasa los tests, construye y publica en https://antotpg.github.io/simulador-ecg/.
    - **Cloudflare Pages / Vercel**: comando de build `npm run build`, carpeta de salida `dist`.
 
    Las rutas son relativas (`base: './'`), así que funciona en cualquier subcarpeta.
@@ -79,11 +81,44 @@ src/
 
 ## Añadir una patología nueva
 
-*(El sistema completo llega en la fase 2; este es el formato previsto.)*
+1. Crea un archivo en `src/pathologies/<carpeta>/<nombre>.ts` que exporte por defecto un objeto de **datos puros**. Usa `definePathology` para tener autocompletado:
 
-1. Crea un archivo en `src/pathologies/<categoría>/<nombre>.ts` que exporte un objeto de **datos puros**: nombre, categoría, modificaciones del vector y de los intervalos, derivaciones afectadas, cambios recíprocos, explicación, territorio 3D y deslizador de gravedad o fase.
-2. Al arrancar, el esquema Zod lo valida. Si falta un campo o un valor no tiene sentido, verás un error claro que dice qué archivo falla.
-3. Aparece solo en el desplegable, dentro de su categoría.
+   ```ts
+   import { definePathology } from '../schema';
+
+   export default definePathology({
+     id: 'mi-patologia',
+     nombre: 'Mi patología',
+     categoria: 'Otras',
+     explicacion: ['Frase 1…', 'Frase 2…', 'Frase 3…'],
+     derivacionesAfectadas: ['V1', 'V2'],
+     reciprocas: ['II'],
+     modificaciones: {
+       intervalos: { prInterval: 220 },          // ms, valores absolutos
+       amplitud: { T: 0.5, U: 3 },               // multiplicadores
+       st: { direccion: [0, 0, 1], mv: 0.15 },   // vector de lesión
+     },
+     territorio3D: { segmentos: [1, 7, 13], arterias: ['da'] },
+     control: {                                   // deslizador opcional
+       tipo: 'gravedad', etiqueta: 'Gravedad',
+       niveles: [
+         { id: 'leve', etiqueta: 'Leve', modificaciones: { amplitud: { T: 0.8 } } },
+         { id: 'grave', etiqueta: 'Grave', modificaciones: { amplitud: { T: 0.3 } } },
+       ],
+     },
+   });
+   ```
+
+2. Todos los campos posibles, explicados, están en [`src/pathologies/schema.ts`](src/pathologies/schema.ts):
+   - intervalos y amplitudes;
+   - anchura de la T;
+   - desplazamientos del ST y del PR;
+   - lóbulos extra en los bucles;
+   - isquemia por territorio y fase;
+   - derivaciones extra (V3R, V4R);
+   - segmentos AHA, arterias y punto de oclusión para el 3D.
+3. Al arrancar, Zod valida el archivo. Si algo está mal, el panel de patología muestra en amarillo qué archivo y qué campo fallan. `npm test` también lo comprueba.
+4. La patología aparece sola en el desplegable, dentro de su categoría. Los archivos que empiezan por `_` (por ejemplo, `isquemia/_fases.ts`) son datos compartidos y no se cargan como patologías.
 
 ## Créditos
 

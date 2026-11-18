@@ -12,6 +12,9 @@ export function Controls() {
   const setHr = useSim((s) => s.setHeartRate);
   const axis = useSim((s) => s.qrsAxis);
   const setAxis = useSim((s) => s.setQrsAxis);
+  const compare = useSim((s) => s.compare);
+  const toggleCompare = useSim((s) => s.toggleCompare);
+  const isNormal = useSim((s) => s.pathologyId === 'normal');
 
   return (
     <section className="controls panel" aria-label="Controles de la simulación">
@@ -44,6 +47,15 @@ export function Controls() {
           </span>
           <input type="range" min={-90} max={180} step={5} value={axis} onChange={(e) => setAxis(Number(e.target.value))} />
         </label>
+        <button
+          className={`btn compare-btn${compare ? ' is-on' : ''}`}
+          onClick={toggleCompare}
+          disabled={isNormal}
+          aria-pressed={compare}
+          title={isNormal ? 'Elige una patología para compararla con el ECG sano' : 'Superpone el ECG sano en azul'}
+        >
+          <span className="swatch" aria-hidden /> Comparar con normal
+        </button>
       </div>
       <Timeline />
     </section>

@@ -1,27 +1,52 @@
 /**
- * Registro de patologías. En la fase 2 se cargarán automáticamente todos los
- * archivos de esta carpeta (import.meta.glob) y se validarán con Zod.
+ * REGISTRO DE PATOLOGÍAS
+ * Carga automáticamente todos los archivos .ts de esta carpeta (y subcarpetas),
+ * los valida con Zod y los ordena por categoría. Para añadir una patología basta
+ * con crear su archivo: no hay que tocar nada más.
  */
-import { normal } from './normal';
+import { CATEGORIES, pathologySchema, type Pathology } from './schema';
 
-export interface PathologyEntry {
-  id: string;
-  nombre: string;
-  categoria: string;
-  explicacion: readonly string[];
+const modules = import.meta.glob<{ default: unknown }>(['./**/*.ts', '!./registry.ts', '!./schema.ts', '!./**/_*.ts', '!./**/*.test.ts'], {
+  eager: true,
+});
+
+export interface RegistryError {
+  archivo: string;
+  mensaje: string;
 }
 
-export const PATHOLOGIES: PathologyEntry[] = [normal];
+const pathologies: Pathology[] = [];
+const errors: RegistryError[] = [];
 
-/** Categorías en el orden en que aparecen en el desplegable. */
-export const CATEGORY_ORDER = [
-  'Referencia',
-  'Isquemia e infarto',
-  'Alteraciones electrolíticas',
-  'Trastornos de la conducción',
-  'Hipertrofia',
-  'Arritmias',
-  'Otras',
-];
+for (const [path, mod] of Object.entries(modules)) {
+  const archivo = path.replace('./', 'src/pathologies/');
+  if (!mod.default) {
+    errors.push({ archivo, mensaje: 'el archivo no tiene "export default".' });
+    continue;
+  }
+  const r = pathologySchema.safeParse(mod.default);
+  if (!r.success) {
+    const mensaje = r.error.issues.map((i) => `${i.path.join('.') || '(raíz)'}: ${i.message}`).join(' · ');
+    errors.push({ archivo, mensaje });
+    console.error(`[patologías] ${archivo} no es válido → ${mensaje}`);
+    continue;
+  }
+  if (pathologies.some((p) => p.id === r.data.id)) {
+    errors.push({ archivo, mensaje: `id repetido: "${r.data.id}"` });
+    continue;
+  }
+  pathologies.push(r.data);
+}
 
-export const getPathology = (id: string) => PATHOLOGIES.find((p) => p.id === id) ?? normal;
+pathologies.sort(
+  (a, b) =>
+    CATEGORIES.indexOf(a.categoria) - CATEGORIES.indexOf(b.categoria) ||
+    (a.id === 'normal' ? -1 : b.id === 'normal' ? 1 : 0) ||
+    a.nombre.localeCompare(b.nombre, 'es'),
+);
+
+export const PATHOLOGIES: readonly Pathology[] = pathologies;
+export const REGISTRY_ERRORS: readonly RegistryError[] = errors;
+
+export const getPathology = (id: string): Pathology =>
+  pathologies.find((p) => p.id === id) ?? pathologies.find((p) => p.id === 'normal')!;

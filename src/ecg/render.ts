@@ -16,6 +16,7 @@ export interface EcgColors {
   major: string;
   trace: string;
   faded: string;
+  compare: string;
   cursor: string;
   accent: string;
   label: string;
@@ -30,6 +31,7 @@ export function readColors(el: Element): EcgColors {
     major: v('--ecg-major'),
     trace: v('--ecg-trace'),
     faded: v('--ecg-faded'),
+    compare: v('--ecg-compare'),
     cursor: v('--ecg-cursor'),
     accent: v('--accent'),
     label: v('--ecg-label'),
@@ -118,6 +120,8 @@ export function drawTrace(
   ctx.stroke();
 }
 
+export type LeadRole = 'afectada' | 'reciproca' | null;
+
 export function drawLabel(
   ctx: CanvasRenderingContext2D,
   box: LeadBox,
@@ -125,11 +129,22 @@ export function drawLabel(
   color: string,
   selected: boolean,
   accent: string,
+  role: LeadRole = null,
 ) {
-  ctx.font = `${selected ? 700 : 600} ${Math.max(10, px * 3.2)}px system-ui, sans-serif`;
-  ctx.fillStyle = selected ? accent : color;
+  const fs = Math.max(10, px * 3.2);
+  ctx.font = `${selected || role ? 700 : 600} ${fs}px system-ui, sans-serif`;
   ctx.textBaseline = 'top';
-  ctx.fillText(box.rhythm ? `${box.lead} (ritmo)` : box.lead, (box.x + 1) * px, (box.y + 1) * px);
+  const text = box.rhythm ? `${box.lead} (ritmo)` : box.lead;
+  const x = (box.x + 1) * px;
+  const y = (box.y + 1) * px;
+  // Derivaciones afectadas (rojo) y con cambios recíprocos (azul): etiqueta con fondo
+  if (role && !box.rhythm) {
+    const w = ctx.measureText(text).width;
+    ctx.fillStyle = role === 'afectada' ? '#dc2626' : '#2563eb';
+    ctx.fillRect(x - 3, y - 2, w + 6, fs + 3);
+    ctx.fillStyle = '#ffffff';
+  } else ctx.fillStyle = selected ? accent : color;
+  ctx.fillText(text, x, y);
   if (selected) {
     ctx.strokeStyle = accent;
     ctx.lineWidth = 2;

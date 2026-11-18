@@ -59,7 +59,7 @@ export const VESSELS = {
 };
 
 /** Radio del VI a la altura y (interpolando el perfil). */
-function lvRadius(y: number): number {
+export function lvRadius(y: number): number {
   const p = LV_PROFILE;
   if (y <= p[0].y) return 0;
   for (let i = 1; i < p.length; i++) {

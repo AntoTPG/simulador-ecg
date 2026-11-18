@@ -39,7 +39,31 @@ export interface EcgLayoutSpec {
 
 const msToMm = (ms: number) => (ms / 1000) * ECG_PAPER.speedMmPerS;
 
-export function classicLayout(durationMs: number): EcgLayoutSpec {
+/**
+ * Añade una fila con derivaciones extra (p. ej. V3R y V4R) al final. Cada una
+ * ocupa una columna, igual que las precordiales.
+ */
+function addExtraRow(l: EcgLayoutSpec, extra: readonly LeadName[], colW: number, colMs: number, rowH: number, gap = 0) {
+  if (!extra.length) return l;
+  const y = l.heightMm - 2;
+  extra.forEach((lead, c) =>
+    l.boxes.push({
+      lead,
+      x: ECG_PAPER.marginLeftMm + c * (colW + gap),
+      y,
+      w: colW,
+      h: rowH,
+      baseline: y + rowH / 2,
+      t0: l.kind === 'clasico' ? c * colMs : 0,
+      t1: l.kind === 'clasico' ? (c + 1) * colMs : colMs,
+    }),
+  );
+  l.calibrationRows.push(y + rowH / 2);
+  l.heightMm += rowH;
+  return l;
+}
+
+export function classicLayout(durationMs: number, extra: readonly LeadName[] = []): EcgLayoutSpec {
   const colMs = durationMs / 4;
   const colW = msToMm(colMs);
   const rowH = 30;
@@ -77,17 +101,23 @@ export function classicLayout(durationMs: number): EcgLayoutSpec {
     t1: durationMs,
     rhythm: true,
   });
-  return {
-    kind: 'clasico',
-    widthMm: left + 4 * colW + 2,
-    heightMm: top + 4 * rowH + 2,
-    boxes,
-    calibrationRows: [0, 1, 2, 3].map((r) => top + r * rowH + rowH / 2),
-    windowMs: durationMs,
-  };
+  return addExtraRow(
+    {
+      kind: 'clasico',
+      widthMm: left + 4 * colW + 2,
+      heightMm: top + 4 * rowH + 2,
+      boxes,
+      calibrationRows: [0, 1, 2, 3].map((r) => top + r * rowH + rowH / 2),
+      windowMs: durationMs,
+    },
+    extra,
+    colW,
+    colMs,
+    rowH,
+  );
 }
 
-export function simultaneousLayout(durationMs: number): EcgLayoutSpec {
+export function simultaneousLayout(durationMs: number, extra: readonly LeadName[] = []): EcgLayoutSpec {
   const windowMs = durationMs / 4;
   const colW = msToMm(windowMs);
   const rowH = 24;
@@ -113,12 +143,19 @@ export function simultaneousLayout(durationMs: number): EcgLayoutSpec {
       }),
     ),
   );
-  return {
-    kind: 'simultaneo',
-    widthMm: left + 2 * colW + gap + 2,
-    heightMm: top + 6 * rowH + 2,
-    boxes,
-    calibrationRows: [0, 1, 2, 3, 4, 5].map((r) => top + r * rowH + rowH / 2),
+  return addExtraRow(
+    {
+      kind: 'simultaneo',
+      widthMm: left + 2 * colW + gap + 2,
+      heightMm: top + 6 * rowH + 2,
+      boxes,
+      calibrationRows: [0, 1, 2, 3, 4, 5].map((r) => top + r * rowH + rowH / 2),
+      windowMs,
+    },
+    extra,
+    colW,
     windowMs,
-  };
+    rowH,
+    gap,
+  );
 }

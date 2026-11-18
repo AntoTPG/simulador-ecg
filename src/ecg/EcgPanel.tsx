@@ -6,6 +6,8 @@ import { useSim } from '../store/useSimStore';
 import { classicLayout, simultaneousLayout } from './layout';
 import { cursorX, drawCalibration, drawLabel, drawPaper, drawTrace, readColors } from './render';
 import { sampleSignal } from '../engine/simulate';
+import { resolvePathology } from '../engine/applyPathology';
+import { getPathology } from '../pathologies/registry';
 
 /** ECG de 12 derivaciones sincronizado con el reloj de la simulación. */
 export function EcgPanel() {
@@ -14,6 +16,13 @@ export function EcgPanel() {
   const theme = useSim((s) => s.theme);
   const selectedLead = useSim((s) => s.selectedLead);
   const selectLead = useSim((s) => s.selectLead);
+  const normalSim = useSim((s) => s.normalSim);
+  const compare = useSim((s) => s.compare);
+  const pathologyId = useSim((s) => s.pathologyId);
+  const levelIndex = useSim((s) => s.levelIndex);
+  const pathology = getPathology(pathologyId);
+  const { afectadas, reciprocas } = resolvePathology(pathology, levelIndex);
+  const roleKey = `${afectadas.join(',')}|${reciprocas.join(',')}`;
 
   const wrapRef = useRef<HTMLDivElement>(null);
   const bgRef = useRef<HTMLCanvasElement>(null);
@@ -22,9 +31,10 @@ export function EcgPanel() {
   const [width, setWidth] = useState(800);
   const [windowIdx, setWindowIdx] = useState(0);
 
+  const extra = pathology.derivacionesExtra;
   const layout = useMemo(
-    () => (ecgLayout === 'clasico' ? classicLayout(sim.duration) : simultaneousLayout(sim.duration)),
-    [ecgLayout, sim.duration],
+    () => (ecgLayout === 'clasico' ? classicLayout(sim.duration, extra) : simultaneousLayout(sim.duration, extra)),
+    [ecgLayout, sim.duration, extra],
   );
   const px = Math.max(ECG_PAPER.minPxPerMm, Math.floor((width / layout.widthMm) * 100) / 100);
   const cssW = Math.round(layout.widthMm * px);
@@ -62,13 +72,22 @@ export function EcgPanel() {
     drawPaper(ctx, layout, px, colors);
     for (const b of layout.calibrationRows) drawCalibration(ctx, b, px, colors.trace);
     const offset = layout.kind === 'simultaneo' ? windowIdx * layout.windowMs : 0;
-    ctx.strokeStyle = colors.faded;
+    // «Comparar con normal»: trazado sano superpuesto en otro color
+    if (compare && sim !== normalSim) {
+      ctx.strokeStyle = colors.compare;
+      ctx.lineWidth = Math.max(1, px * 0.3);
+      for (const box of layout.boxes) drawTrace(ctx, normalSim, box, px, box.t0, box.t1, offset);
+    }
+    // Con la comparación activa, el trazado patológico "futuro" se ve más para no confundirse con el sano
+    ctx.strokeStyle = compare && sim !== normalSim ? colors.label : colors.faded;
     ctx.lineWidth = Math.max(1, px * 0.28);
     for (const box of layout.boxes) drawTrace(ctx, sim, box, px, box.t0, box.t1, offset);
-    for (const box of layout.boxes)
-      drawLabel(ctx, box, px, colors.label, box.lead === selectedLead, colors.accent);
+    for (const box of layout.boxes) {
+      const role = afectadas.includes(box.lead) ? 'afectada' : reciprocas.includes(box.lead) ? 'reciproca' : null;
+      drawLabel(ctx, box, px, colors.label, box.lead === selectedLead, colors.accent, role);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sim, layout, px, theme, selectedLead, windowIdx, cssW, cssH]);
+  }, [sim, normalSim, compare, roleKey, layout, px, theme, selectedLead, windowIdx, cssW, cssH]);
 
   // 2) y 3) TINTA progresiva y CURSOR, enganchados al reloj
   useEffect(() => {
