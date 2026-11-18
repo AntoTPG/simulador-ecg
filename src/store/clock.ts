@@ -33,14 +33,20 @@ export const clock = new SimClock();
  * Arranca el bucle de animación. `getState` devuelve si está en marcha, la
  * velocidad (1 = tiempo real) y la duración del registro para hacer el bucle.
  */
-export function startClockLoop(getState: () => { playing: boolean; speed: number; duration: number }) {
+export function startClockLoop(
+  getState: () => { playing: boolean; speed: number; duration: number; external?: number | null },
+) {
   let last = performance.now();
   let raf = 0;
   const loop = (now: number) => {
     const dt = Math.min(100, now - last); // si la pestaña estuvo oculta, no saltar
     last = now;
     const s = getState();
-    if (s.playing) {
+    if (s.playing && s.external != null) {
+      // Con el sonido activado manda el audio: así ruidos, ECG y 3D van exactamente a la par
+      clock.t = s.external;
+      clock.emit();
+    } else if (s.playing) {
       clock.t = (clock.t + dt * s.speed) % s.duration;
       clock.emit();
     }

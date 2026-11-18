@@ -27,7 +27,7 @@ export type Layer =
 export type Theme = 'claro' | 'oscuro';
 export type EcgLayout = 'clasico' | 'simultaneo';
 export type CameraView = 'libre' | 'oblicua' | 'frontal' | 'horizontal' | 'lateral';
-export type MobileTab = '3d' | 'ecg' | 'patologia';
+export type MobileTab = '3d' | 'ecg' | 'ciclo' | 'patologia';
 
 interface SimState {
   heartRate: number;
@@ -54,6 +54,11 @@ interface SimState {
   theme: Theme;
   ecgLayout: EcgLayout;
   mobileTab: MobileTab;
+  /** Ruido cardíaco elegido (catálogo de src/sounds) y si se está escuchando. */
+  soundId: string;
+  audioOn: boolean;
+  setSound: (id: string) => void;
+  setAudioOn: (on: boolean) => void;
 
   setHeartRate: (hr: number) => void;
   setQrsAxis: (deg: number) => void;
@@ -158,7 +163,8 @@ export const useSim = create<SimState>()((set, get) => ({
   toggleCompare: () => set({ compare: !get().compare }),
   togglePlay: () => set({ playing: !get().playing }),
   setPlaying: (playing) => set({ playing }),
-  setSpeed: (speed) => set({ speed }),
+  // A otra velocidad el sonido se distorsionaría: se apaga
+  setSpeed: (speed) => set(speed === 1 ? { speed } : { speed, audioOn: false }),
   selectLead: (selectedLead) => set({ selectedLead }),
   toggleLayer: (l) => set({ layers: { ...get().layers, [l]: !get().layers[l] } }),
   setHeartOpacity: (heartOpacity) => set({ heartOpacity }),
@@ -170,5 +176,10 @@ export const useSim = create<SimState>()((set, get) => ({
     set({ theme });
   },
   setEcgLayout: (ecgLayout) => set({ ecgLayout }),
+  soundId: 'normal',
+  audioOn: false,
+  setSound: (soundId) => set({ soundId }),
+  // El sonido solo tiene sentido en tiempo real: al activarlo se pone 1× y en marcha
+  setAudioOn: (audioOn) => set(audioOn ? { audioOn, speed: 1, playing: true } : { audioOn }),
   setMobileTab: (mobileTab) => set({ mobileTab }),
 }));

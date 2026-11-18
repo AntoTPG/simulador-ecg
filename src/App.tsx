@@ -9,6 +9,11 @@ import { LayersButton, ViewButtons } from './ui/LayerToggles';
 import { HeartRateBadge, LeadInfoPanel, PhaseStepper } from './ui/LiveInfo';
 import { PathologyPanel } from './ui/PathologyPanel';
 import { VectorPlanes } from './ui/VectorPlanes';
+import { WiggersPanel } from './ui/WiggersPanel';
+import { HeartSoundsPanel } from './ui/HeartSoundsPanel';
+import { audioPositionMs, playLoop, stopAudio } from './sounds/player';
+import { getCycleData } from './sounds/cycleData';
+import { clock } from './store/clock';
 
 function useIsMobile(bp = 900) {
   const q = `(max-width: ${bp}px)`;
@@ -99,9 +104,25 @@ function VectorSection() {
   );
 }
 
+/** Arranca, para o resincroniza el sonido según el estado (no dibuja nada). */
+function AudioSync() {
+  const audioOn = useSim((s) => s.audioOn);
+  const playing = useSim((s) => s.playing);
+  const speed = useSim((s) => s.speed);
+  const sim = useSim((s) => s.sim);
+  const soundId = useSim((s) => s.soundId);
+  useEffect(() => {
+    if (audioOn && playing && speed === 1) playLoop(getCycleData(sim, soundId).audio, sim.duration, clock.t);
+    else stopAudio();
+    return () => stopAudio();
+  }, [audioOn, playing, speed, sim, soundId]);
+  return null;
+}
+
 const TABS: { k: MobileTab; label: string; icon: string }[] = [
   { k: '3d', label: 'Corazón', icon: '♥' },
   { k: 'ecg', label: 'ECG', icon: '∿' },
+  { k: 'ciclo', label: 'Ciclo y ruidos', icon: '🩺' },
   { k: 'patologia', label: 'Patología', icon: '☰' },
 ];
 
@@ -114,7 +135,8 @@ export default function App() {
     () =>
       startClockLoop(() => {
         const s = useSim.getState();
-        return { playing: s.playing, speed: s.speed, duration: s.sim.duration };
+        // Con el sonido activado, el reloj sigue al audio (sincronía perfecta)
+        return { playing: s.playing, speed: s.speed, duration: s.sim.duration, external: s.audioOn ? audioPositionMs() : null };
       }),
     [],
   );
@@ -122,6 +144,7 @@ export default function App() {
   if (mobile) {
     return (
       <div className="app mobile">
+        <AudioSync />
         <Header />
         <main className="mobile-main">
           {tab === '3d' && (
@@ -134,6 +157,12 @@ export default function App() {
             <div className="stack">
               <EcgSection />
               <LeadInfoPanel />
+            </div>
+          )}
+          {tab === 'ciclo' && (
+            <div className="stack">
+              <WiggersPanel />
+              <HeartSoundsPanel />
             </div>
           )}
           {tab === 'patologia' && (
@@ -158,6 +187,7 @@ export default function App() {
 
   return (
     <div className="app desktop">
+      <AudioSync />
       <Header />
       {/* El contenido tiene su propio scroll; la barra de controles queda fija debajo y no tapa nada */}
       <div className="scroll-area">
@@ -171,6 +201,11 @@ export default function App() {
             <PathologyPanel />
           </div>
         </main>
+        {/* Ciclo cardíaco y ruidos, sincronizados con todo lo anterior */}
+        <section className="cycle-row" aria-label="Ciclo cardíaco y ruidos cardíacos">
+          <WiggersPanel />
+          <HeartSoundsPanel />
+        </section>
         <Footer />
       </div>
       <Controls />

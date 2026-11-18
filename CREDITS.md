@@ -14,5 +14,10 @@
 - Dower GE et al. On deriving the electrocardiogram from vectorcardiographic leads. Clin Cardiol, 1980. (Matriz inversa de Dower.)
 - Frank E. An accurate, clinically practical system for spatial vectorcardiography. Circulation, 1956.
 
+## Ruidos cardíacos
+- Explicaciones elaboradas a partir del **Manual MSD** (versión para profesionales), «Auscultación cardíaca» (Gupta J. I., Shea M. J., rev. abr. 2025): https://www.msdmanuals.com/es/professional/trastornos-cardiovasculares/abordaje-del-paciente-card%C3%ADaco/auscultaci%C3%B3n-card%C3%ADaca
+- Grabaciones reales de referencia (enlazadas, no incluidas): Judge R., Mangrulkar R. *Heart Sound and Murmur Library*. University of Michigan Medical School / Open.Michigan, 2015. Licencia **CC BY‑SA 4.0**: https://hdl.handle.net/2027.42/120554
+- Los sonidos de la app se sintetizan a partir del modelo hemodinámico propio; no son grabaciones.
+
 ## Bibliotecas
 React, three.js, @react-three/fiber, @react-three/drei, Zustand, Zod, Vite y Vitest. Todas tienen licencia MIT.

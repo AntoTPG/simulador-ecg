@@ -1226,3 +1226,226 @@ input[type='range'] {
     transition: none !important;
   }
 }
+
+/* ===== Ciclo cardíaco (Wiggers) y ruidos ===== */
+.cycle-row {
+  display: grid;
+  grid-template-columns: 1.55fr 1fr;
+  gap: 12px;
+  align-items: start;
+}
+.wiggers-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px 12px;
+  margin-bottom: 6px;
+}
+.wiggers-head h2 {
+  margin: 0;
+}
+.wiggers-live {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+}
+.phase-chip {
+  font-weight: 800;
+  font-size: 12.5px;
+  color: #fff;
+  background: var(--accent-grad);
+  border-radius: 8px;
+  padding: 3px 9px;
+}
+.resp-chip {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 2px 8px;
+  color: var(--muted);
+}
+.wiggers-wrap {
+  position: relative;
+  height: 400px;
+}
+.wiggers-wrap canvas {
+  position: absolute;
+  inset: 0;
+}
+.wiggers-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin-top: 6px;
+  align-items: center;
+}
+.wiggers-legend i {
+  display: inline-block;
+  width: 16px;
+  height: 3px;
+  border-radius: 2px;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+.wiggers-legend i.dashed {
+  height: 0;
+  border-top: 2px dashed;
+}
+.sounds-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.sounds-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.sounds-head h2 {
+  margin: 0;
+}
+.listen-btn.is-on {
+  background: var(--accent-grad);
+  color: #fff;
+  border-color: transparent;
+  animation: pulse-glow 1.2s ease-in-out infinite;
+}
+@keyframes pulse-glow {
+  50% {
+    box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent) 25%, transparent);
+  }
+}
+.sound-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 260px;
+  overflow: auto;
+  padding-right: 4px;
+}
+.sound-group-title {
+  font-size: 10.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  margin-bottom: 3px;
+}
+.sound-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.sound-chip {
+  font: inherit;
+  font-size: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  border-radius: 999px;
+  padding: 3px 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.sound-chip.fisiologico {
+  border-left: 3px solid var(--pos);
+}
+.sound-chip.patologico {
+  border-left: 3px solid var(--neg);
+}
+.sound-chip:hover {
+  border-color: var(--accent);
+}
+.sound-chip.is-on {
+  background: var(--accent-grad);
+  color: #fff;
+  border-color: transparent;
+}
+.sound-detail {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  animation: fade 0.3s ease both;
+}
+.sound-text h3 {
+  margin: 0 0 4px;
+}
+.sound-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.badge {
+  font-size: 11px;
+  font-weight: 700;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 2px 7px;
+  background: var(--surface-2);
+}
+.badge.fisiologico {
+  color: var(--pos);
+  border-color: color-mix(in srgb, var(--pos) 45%, transparent);
+}
+.badge.patologico {
+  color: var(--neg);
+  border-color: color-mix(in srgb, var(--neg) 45%, transparent);
+}
+.sound-pattern {
+  margin: 6px 0 2px;
+  font-size: 12.5px;
+}
+.sound-text p {
+  margin: 4px 0 0;
+}
+.sounds-card .explanation {
+  margin: 0;
+}
+.sounds-card .explanation p {
+  margin: 0 0 6px;
+}
+.sources a {
+  color: var(--accent);
+}
+.chest {
+  width: 96px;
+  flex: none;
+}
+.chest-body {
+  fill: var(--surface-2);
+  stroke: var(--border);
+  stroke-width: 1.5;
+}
+.chest-sternum {
+  fill: color-mix(in srgb, var(--muted) 25%, transparent);
+}
+.chest-rib {
+  fill: none;
+  stroke: var(--border);
+}
+.chest-heart {
+  fill: color-mix(in srgb, #e11d48 22%, transparent);
+  stroke: #e11d48;
+  stroke-width: 1;
+}
+.foco {
+  fill: var(--muted);
+}
+.foco.on {
+  fill: var(--accent);
+  stroke: #fff;
+  stroke-width: 1.5;
+  animation: pulse-glow 1.2s ease-in-out infinite;
+}
+@media (max-width: 1250px) {
+  .cycle-row {
+    grid-template-columns: 1fr;
+  }
+}
+.mobile .tabs {
+  grid-template-columns: repeat(4, 1fr);
+}
+.mobile .wiggers-wrap {
+  height: 400px;
+}

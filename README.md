@@ -26,6 +26,18 @@ Aplicación educativa para estudiantes de Medicina: muestra el **vector cardíac
 - **Hipertrofia**: HVI (voltaje, sobrecarga).
 - **Otras**: pericarditis (estadios y derrame), miocarditis, TEP (S1Q3T3), Brugada (tipos 1 y 2), QT largo, efecto e intoxicación digitálica.
 
+### Ciclo cardíaco y ruidos cardíacos
+
+- **Diagrama de Wiggers**:
+  - presión del VI, de la aorta y de la aurícula izquierda, volumen del VI, ECG (II) y fonocardiograma de un latido;
+  - fases del ciclo y cierres y aperturas valvulares;
+  - VTD, VTS y FE, con el cursor sincronizado con el ECG y el 3D.
+- **Modelo hemodinámico** (`src/engine/hemodynamics.ts`), calculado latido a latido a partir del ECG. Incluye el acoplamiento electromecánico, Frank‑Starling, el modelo Windkessel y la patada auricular. Por eso las arritmias se reflejan solas: en la FA cada latido es distinto y no hay onda *a* ni R4, y en el BAV completo aparecen ondas *a* en cañón.
+- **20 ruidos** fisiológicos y patológicos (`src/sounds/catalog.ts`): R1/R2, desdoblamientos, R3, R4, galopes, clics, chasquido de apertura, soplos sistólicos, diastólicos y continuos, roce y knock pericárdicos.
+  - Cada uno trae una explicación breve, su foco de auscultación y si se oye mejor con la campana o con la membrana.
+  - El sonido es **sintetizado** y sincronizado con la animación.
+  - Fuentes: Manual MSD («Auscultación cardíaca») y la Heart Sound and Murmur Library de la Universidad de Michigan (grabaciones reales, CC BY‑SA 4.0).
+
 ## Instalarla como app (PWA)
 
 Abre https://antotpg.github.io/simulador-ecg/ y:
