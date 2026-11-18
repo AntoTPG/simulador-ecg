@@ -9,6 +9,22 @@ import { sampleSignal } from '../engine/simulate';
 import { resolvePathology } from '../engine/applyPathology';
 import { getPathology } from '../pathologies/registry';
 
+/**
+ * Altura máxima del papel en escritorio: la ventana menos la cabecera, la
+ * cabecera del ECG y el panel de controles fijo. En móvil no se limita (la
+ * pestaña ECG tiene su propio scroll).
+ */
+function useAvailableHeight() {
+  const calc = () => (window.innerWidth <= 900 ? Infinity : Math.max(300, window.innerHeight - 310));
+  const [h, setH] = useState(calc);
+  useEffect(() => {
+    const on = () => setH(calc());
+    window.addEventListener('resize', on);
+    return () => window.removeEventListener('resize', on);
+  }, []);
+  return h;
+}
+
 /** ECG de 12 derivaciones sincronizado con el reloj de la simulación. */
 export function EcgPanel() {
   const sim = useSim((s) => s.sim);
@@ -29,6 +45,7 @@ export function EcgPanel() {
   const inkRef = useRef<HTMLCanvasElement>(null);
   const curRef = useRef<HTMLCanvasElement>(null);
   const [width, setWidth] = useState(800);
+  const maxHeight = useAvailableHeight();
   const [windowIdx, setWindowIdx] = useState(0);
 
   const extra = pathology.derivacionesExtra;
@@ -36,7 +53,12 @@ export function EcgPanel() {
     () => (ecgLayout === 'clasico' ? classicLayout(sim.duration, extra) : simultaneousLayout(sim.duration, extra)),
     [ecgLayout, sim.duration, extra],
   );
-  const px = Math.max(ECG_PAPER.minPxPerMm, Math.floor((width / layout.widthMm) * 100) / 100);
+  // Escala del papel: cabe a lo ancho y, en escritorio, también a lo alto, para
+  // que el ECG no quede debajo del panel de controles (el formato simultáneo,
+  // con solo dos columnas, es mucho más alto que ancho).
+  const fitW = width / layout.widthMm;
+  const fitH = maxHeight / layout.heightMm;
+  const px = Math.max(ECG_PAPER.minPxPerMm, Math.floor(Math.min(fitW, fitH) * 100) / 100);
   const cssW = Math.round(layout.widthMm * px);
   const cssH = Math.round(layout.heightMm * px);
   const dpr = typeof window !== 'undefined' ? Math.min(2, window.devicePixelRatio || 1) : 1;
