@@ -24,7 +24,8 @@ Instrucciones para Claude (y para cualquier persona) que trabaje en este proyect
 - Redacta **con palabras propias**. Nunca copies párrafos literales de manuales ni imágenes de libros con copyright.
 - Los valores numéricos (saturaciones, presiones, intervalos) son orientativos: indícalo cuando proceda.
 - Mantén siempre visible el aviso: «Herramienta educativa y simplificada. No apta para uso clínico ni para diagnóstico». El enfoque debe seguir siendo educativo, nunca diagnóstico.
-- Mantén el pie: «Creado por Antonio Requena Quesada con ayuda de Claude Code».
+- Mantén el pie: «Creado por Antonio Requena Quesada con ayuda de Claude Code» y el aviso «© Antonio Requena Quesada. Todos los derechos reservados».
+- El proyecto NO es de código abierto (ver `LICENSE`): no añadas licencias libres (MIT, GPL…) ni cambies `LICENSE` sin que Antonio lo pida.
 - Grabaciones de `public/audio/michigan/`: **CC BY‑SA 4.0** (Universidad de Michigan). Hay que citarlas siempre, mantener `LICENCIA.txt` y anotar ahí cualquier cambio que se les haga.
 - Las fuentes y créditos van en `CREDITS.md`.
 

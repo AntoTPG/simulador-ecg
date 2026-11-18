@@ -167,3 +167,9 @@ src/
 Creado por **Antonio Requena Quesada** con ayuda de Claude Code.
 
 Corazón 3D procedural, creado para este proyecto. Ver `CREDITS.md`.
+
+## Licencia
+
+© 2026 Antonio Requena Quesada. **Todos los derechos reservados.** Ver [`LICENSE`](LICENSE).
+Que el código sea visible no permite copiarlo, modificarlo ni redistribuirlo sin autorización por escrito.
+Excepciones: las grabaciones de `public/audio/michigan/` (CC BY‑SA 4.0) y las dependencias de software, con sus propias licencias.

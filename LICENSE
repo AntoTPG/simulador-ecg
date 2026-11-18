@@ -1,0 +1,32 @@
+Simulador ECG 3D
+Copyright © 2026 Antonio Requena Quesada. Todos los derechos reservados.
+
+Este software y su contenido —código fuente, textos, explicaciones, diseños,
+esquemas, diagramas e interfaz— son obra de Antonio Requena Quesada, creada con
+la ayuda de herramientas de inteligencia artificial (Claude Code), y están
+protegidos por el Texto Refundido de la Ley de Propiedad Intelectual (Real
+Decreto Legislativo 1/1996, de 12 de abril) y demás normativa aplicable.
+
+Queda prohibida la reproducción, distribución, comunicación pública y
+transformación, total o parcial, de este software y de su contenido, por
+cualquier medio, sin la autorización previa y por escrito del titular.
+
+Se permite usar la aplicación publicada con fines educativos y personales.
+Que el código sea visible no concede ningún permiso de copia, modificación o
+redistribución.
+
+EXCEPCIONES — componentes de terceros con su propia licencia, que prevalece
+sobre este aviso en lo que a ellos respecta:
+
+  - public/audio/michigan/: grabaciones y esquemas de la «Heart Sound and Murmur
+    Library» (Judge R., Mangrulkar R., University of Michigan Medical School,
+    2015), con licencia Creative Commons Reconocimiento-CompartirIgual 4.0
+    (CC BY-SA 4.0). Ver public/audio/michigan/LICENCIA.txt.
+  - Dependencias de software (React, three.js, @react-three/fiber,
+    @react-three/drei, Zustand, Zod, Vite, Vitest, etc.): se rigen por sus
+    respectivas licencias (principalmente MIT), incluidas en cada paquete.
+
+AVISO: herramienta educativa y simplificada. No apta para uso clínico ni para
+diagnóstico. Se ofrece «tal cual», sin garantía de ningún tipo.
+
+Para solicitar permisos o colaboraciones, contacta con el titular.

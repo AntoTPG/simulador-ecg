@@ -29,7 +29,15 @@ function useIsMobile(bp = 900) {
 }
 
 function Footer() {
-  return <footer className="app-footer">Creado por Antonio Requena Quesada con ayuda de Claude Code</footer>;
+  return (
+    <footer className="app-footer">
+      <div>Creado por Antonio Requena Quesada con ayuda de Claude Code</div>
+      <div className="copyright">
+        © {new Date().getFullYear() > 2026 ? `2026–${new Date().getFullYear()}` : 2026} Antonio Requena Quesada. Todos los derechos reservados.
+        Grabaciones de ruidos cardíacos: Univ. de Michigan (CC BY‑SA 4.0).
+      </div>
+    </footer>
+  );
 }
 
 function Header() {

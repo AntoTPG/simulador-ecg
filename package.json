@@ -1,6 +1,8 @@
 {
   "name": "simulador-ecg",
   "private": true,
+  "author": "Antonio Requena Quesada",
+  "license": "SEE LICENSE IN LICENSE",
   "version": "0.1.0",
   "description": "Simulador educativo 3D del vector cardíaco y del ECG de 12 derivaciones",
   "type": "module",
