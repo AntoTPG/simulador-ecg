@@ -1,5 +1,5 @@
 /**
- * Paneles que se actualizan con el reloj sin re-renderizar React
+ * Elementos que se actualizan con el reloj sin re-renderizar React
  * (se escribe directamente en el DOM con refs).
  */
 import { useEffect, useRef } from 'react';
@@ -11,33 +11,86 @@ import { PHASE_COLORS } from '../heart3d/frames';
 import { clock } from '../store/clock';
 import { useSim } from '../store/useSimStore';
 
-const PHASE_TEXT: Record<SegmentKind | 'TP', string> = {
-  P: 'Onda P · despolarización auricular',
-  PR: 'Segmento PR · retraso en el nodo AV',
-  QRS: 'QRS · despolarización ventricular',
-  ST: 'Segmento ST · meseta: todo el ventrículo despolarizado',
-  T: 'Onda T · repolarización ventricular',
-  U: 'Onda U · repolarización tardía',
-  TP: 'Segmento TP · diástole eléctrica (reposo)',
-};
+type Phase = SegmentKind | 'TP';
 
-/** Etiqueta con la fase eléctrica actual (sobre el 3D). */
-export function PhaseBadge() {
-  const ref = useRef<HTMLDivElement>(null);
+const STEPS: { k: Phase; label: string; desc: string }[] = [
+  { k: 'P', label: 'P', desc: 'Despolarización auricular: el impulso sale del nodo sinusal y recorre las aurículas.' },
+  { k: 'PR', label: 'PR', desc: 'Retraso en el nodo AV: las aurículas terminan de llenar los ventrículos.' },
+  { k: 'QRS', label: 'QRS', desc: 'Despolarización ventricular: septo → ápex → paredes libres → bases.' },
+  { k: 'ST', label: 'ST', desc: 'Meseta: todo el ventrículo está despolarizado y no hay diferencias de potencial.' },
+  { k: 'T', label: 'T', desc: 'Repolarización ventricular: del epicardio al endocardio (por eso la T es positiva).' },
+  { k: 'TP', label: 'TP', desc: 'Reposo eléctrico (diástole): el corazón se llena.' },
+];
+
+/** Línea de fases P → PR → QRS → ST → T → TP con la activa resaltada. */
+export function PhaseStepper() {
   const sim = useSim((s) => s.sim);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const descRef = useRef<HTMLParagraphElement>(null);
+
   useEffect(() => {
     let last = '';
     const lesion = norm(sim.params.stVector) > 0.02;
     return clock.subscribe((t) => {
-      const k = segmentAt(sim, t)?.kind ?? 'TP';
-      if (k === last || !ref.current) return;
+      let k: Phase = segmentAt(sim, t)?.kind ?? 'TP';
+      if (k === 'U') k = 'TP';
+      if (k === last || !rootRef.current) return;
       last = k;
-      ref.current.textContent =
-        k === 'ST' && lesion ? 'Segmento ST · la flecha es el VECTOR DE LESIÓN (ST desplazado)' : PHASE_TEXT[k];
-      ref.current.style.borderColor = k === 'TP' ? 'var(--border)' : PHASE_COLORS[k];
+      rootRef.current.querySelectorAll<HTMLElement>('.step').forEach((el) => {
+        const on = el.dataset.k === k;
+        el.classList.toggle('is-on', on);
+        el.style.setProperty('--c', k === 'TP' || k === 'PR' || k === 'ST' ? 'var(--muted)' : PHASE_COLORS[k as 'P']);
+      });
+      const step = STEPS.find((s) => s.k === k)!;
+      if (descRef.current)
+        descRef.current.textContent =
+          k === 'ST' && lesion
+            ? 'ST desplazado: la flecha que ves ahora es el VECTOR DE LESIÓN.'
+            : step.desc;
     });
   }, [sim]);
-  return <div ref={ref} className="phase-badge" aria-live="off" />;
+
+  return (
+    <div className="phase-stepper" ref={rootRef}>
+      <div className="steps">
+        {STEPS.map((s) => (
+          <span key={s.k} className="step" data-k={s.k}>
+            {s.label}
+          </span>
+        ))}
+      </div>
+      <p ref={descRef} className="step-desc" />
+    </div>
+  );
+}
+
+/** Frecuencia cardíaca con un corazón que late en cada QRS. */
+export function HeartRateBadge() {
+  const sim = useSim((s) => s.sim);
+  const hr = useSim((s) => s.heartRate);
+  const heartRef = useRef<HTMLSpanElement>(null);
+  useEffect(() => {
+    let wasQrs = false;
+    return clock.subscribe((t) => {
+      const isQrs = segmentAt(sim, t)?.kind === 'QRS';
+      if (isQrs && !wasQrs && heartRef.current) {
+        const el = heartRef.current;
+        el.classList.remove('beat');
+        void el.offsetWidth; // reinicia la animación
+        el.classList.add('beat');
+      }
+      wasQrs = isQrs;
+    });
+  }, [sim]);
+  return (
+    <div className="hr-badge" title="Frecuencia cardíaca">
+      <span ref={heartRef} className="hr-heart" aria-hidden>
+        ♥
+      </span>
+      <b className="mono">{hr}</b>
+      <span className="muted small">lpm</span>
+    </div>
+  );
 }
 
 /**
@@ -50,6 +103,7 @@ export function LeadInfoPanel() {
   const select = useSim((s) => s.selectLead);
   const vRef = useRef<HTMLSpanElement>(null);
   const angRef = useRef<HTMLSpanElement>(null);
+  const barRef = useRef<HTMLDivElement>(null);
   const msgRef = useRef<HTMLParagraphElement>(null);
 
   useEffect(() => {
@@ -64,15 +118,19 @@ export function LeadInfoPanel() {
         vRef.current.textContent = `${v >= 0 ? '+' : '−'}${Math.abs(v).toFixed(2).replace('.', ',')} mV`;
         vRef.current.className = `mono volt ${v > 0.03 ? 'pos' : v < -0.03 ? 'neg' : ''}`;
       }
+      if (barRef.current) {
+        const f = Math.max(-1, Math.min(1, v / 2));
+        barRef.current.style.left = f >= 0 ? '50%' : `${50 + f * 50}%`;
+        barRef.current.style.width = `${Math.abs(f) * 50}%`;
+        barRef.current.className = `gauge-fill ${v >= 0 ? 'pos' : 'neg'}`;
+      }
       if (angRef.current) angRef.current.textContent = mag < 0.03 ? '—' : `${ang.toFixed(0)}°`;
       if (msgRef.current) {
         let msg: string;
-        if (mag < 0.03) msg = 'El vector es casi nulo (línea de base): no hay diferencias de potencial que registrar.';
-        else if (v > 0.03)
-          msg = `El vector apunta hacia el polo positivo de ${lead} (ángulo < 90°): el frente eléctrico se ACERCA al electrodo → deflexión POSITIVA.`;
-        else if (v < -0.03)
-          msg = `El vector apunta hacia el polo negativo de ${lead} (ángulo > 90°): el frente eléctrico se ALEJA del electrodo → deflexión NEGATIVA.`;
-        else msg = `El vector es casi perpendicular al eje de ${lead} (≈ 90°): su proyección es ~0 → onda isodifásica o plana.`;
+        if (mag < 0.03) msg = 'Vector casi nulo (línea de base): no hay diferencias de potencial que registrar.';
+        else if (v > 0.03) msg = `El vector apunta hacia el polo + de ${lead} (ángulo < 90°): el frente se ACERCA al electrodo → onda POSITIVA.`;
+        else if (v < -0.03) msg = `El vector apunta hacia el polo − de ${lead} (ángulo > 90°): el frente se ALEJA del electrodo → onda NEGATIVA.`;
+        else msg = `El vector es casi perpendicular al eje de ${lead} (≈ 90°): proyección ~0 → onda isodifásica o plana.`;
         msgRef.current.textContent = msg;
       }
     });
@@ -80,32 +138,38 @@ export function LeadInfoPanel() {
 
   if (!lead) {
     return (
-      <div className="lead-info">
-        <p className="muted">Pulsa una derivación en el ECG o una etiqueta del 3D para ver su proyección.</p>
+      <div className="lead-info card">
+        <p className="muted">Pulsa una derivación (en el ECG, en los diagramas o en el 3D) para ver por qué su onda es positiva o negativa.</p>
       </div>
     );
   }
   const info = LEAD_INFO[lead];
   return (
-    <div className="lead-info">
+    <div className="lead-info card">
       <div className="lead-info-head">
         <strong className="lead-name">{lead}</strong>
-        <span className="muted">
-          {info.tipo} · {info.formula}
-          {info.angulo !== undefined ? ` · ${info.angulo > 0 ? '+' : ''}${info.angulo}°` : ''}
-        </span>
-        <button className="btn btn-small" onClick={() => select(null)} aria-label="Quitar selección">
+        <div className="lead-meta">
+          <span>{info.tipo}</span>
+          <span className="muted">
+            {info.formula}
+            {info.angulo !== undefined ? ` · ${info.angulo > 0 ? '+' : ''}${info.angulo}°` : ''} · mira la cara {info.cara}
+          </span>
+        </div>
+        <button className="icon-btn" onClick={() => select(null)} aria-label="Quitar selección">
           ✕
         </button>
       </div>
+      <div className="gauge" aria-hidden>
+        <div className="gauge-mid" />
+        <div ref={barRef} className="gauge-fill" />
+      </div>
       <div className="lead-info-live">
         <span>
-          Voltaje: <span ref={vRef} className="mono volt" />
+          Voltaje <span ref={vRef} className="mono volt" />
         </span>
         <span>
-          Ángulo H–eje: <span ref={angRef} className="mono" />
+          Ángulo vector–eje <span ref={angRef} className="mono" />
         </span>
-        <span className="muted">Mira la cara {info.cara}</span>
       </div>
       <p ref={msgRef} className="lead-msg" />
     </div>

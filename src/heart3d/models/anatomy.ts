@@ -27,23 +27,7 @@ export const LV_PROFILE = [
   [0, 1.06],
 ].map(([r, y]) => new Vector2(r, y));
 
-/** Perfil del VD: más corto (no llega al ápex) y aplanado contra el VI. */
-export const RV_PROFILE = [
-  [0, -1.15],
-  [0.35, -1.0],
-  [0.62, -0.6],
-  [0.78, -0.1],
-  [0.8, 0.35],
-  [0.7, 0.72],
-  [0.45, 0.95],
-  [0, 1.0],
-].map(([r, y]) => new Vector2(r, y));
-
 export const LV_CENTER = new Vector3(0.28, 0, -0.18);
-export const RV_CENTER = new Vector3(-0.52, 0.12, 0.42);
-/** El VD se aplana (escala z) y se gira para "abrazar" al VI por delante y a la derecha. */
-export const RV_ROT_Y = Math.atan2(-0.8, 0.6);
-export const RV_FLATTEN = 0.62;
 
 export const LA = { center: new Vector3(0.4, 1.25, -0.62), r: 0.55 };
 export const RA = { center: new Vector3(-0.8, 1.05, -0.05), r: 0.6 };
@@ -53,7 +37,8 @@ const curve = (pts: Vector3[]) => new CatmullRomCurve3(pts);
 
 export const VESSELS = {
   aorta: { r: 0.24, curve: curve([v(0.05, 0.85, 0), v(0, 1.5, 0.05), v(0.1, 2.15, -0.05), v(0.5, 2.45, -0.45), v(0.85, 2.1, -0.85), v(0.9, 1.3, -0.95)]) },
-  pulmonar: { r: 0.21, curve: curve([v(-0.35, 0.95, 0.55), v(-0.15, 1.6, 0.55), v(0.2, 2.0, 0.3), v(0.6, 2.0, -0.05), v(0.95, 1.85, -0.3)]) },
+  // Tronco pulmonar: sale del infundíbulo del VD, por delante y a la izquierda de la aorta
+  pulmonar: { r: 0.21, curve: curve([v(-0.12, 0.85, 0.62), v(-0.05, 1.55, 0.55), v(0.25, 2.0, 0.3), v(0.6, 2.0, -0.05), v(0.95, 1.85, -0.3)]) },
   venaCavaSup: { r: 0.18, curve: curve([v(-0.82, 1.5, -0.08), v(-0.82, 2.0, -0.1), v(-0.8, 2.55, -0.12)]) },
   venaCavaInf: { r: 0.2, curve: curve([v(-0.75, 0.6, -0.3), v(-0.7, 0.0, -0.45), v(-0.62, -0.5, -0.5)]) },
 };
@@ -85,6 +70,32 @@ export function lvSurface(y: number, thetaDeg: number, lift = 0.07): Vector3 {
 const along = (pts: [number, number][]) => curve(pts.map(([y, th]) => lvSurface(y, th)));
 
 /**
+ * VENTRÍCULO DERECHO EN MEDIA LUNA. El VD no es una esfera: es una cavidad en
+ * forma de semiluna que "abraza" al VI por delante y a la derecha, y cuyo
+ * tabique es la propia pared del VI. Lo construimos como un abultamiento sobre
+ * la superficie del VI entre θ = 70° (anterior) y θ = 250° (inferior derecha).
+ */
+export const RV_RANGE = { theta: [70, 250] as [number, number], y: [-1.2, 0.95] as [number, number] };
+
+export function rvBulge(y: number, thetaDeg: number, k = 1): number {
+  const [y0, y1] = RV_RANGE.y;
+  const [t0, t1] = RV_RANGE.theta;
+  if (y <= y0 || y >= y1 || thetaDeg <= t0 || thetaDeg >= t1) return 0;
+  const fy = Math.pow(Math.sin((Math.PI * (y - y0)) / (y1 - y0)), 0.7);
+  const ft = Math.pow(Math.sin((Math.PI * (thetaDeg - t0)) / (t1 - t0)), 0.6);
+  // Más abultado por delante (θ≈150°) que por detrás
+  const asym = 1 - 0.25 * ((thetaDeg - t0) / (t1 - t0));
+  return 0.62 * k * fy * ft * asym;
+}
+
+/** Punto de la pared libre del VD (k < 1 da la superficie endocárdica). */
+export function rvSurface(y: number, thetaDeg: number, k = 1): Vector3 {
+  const r = lvRadius(y) + rvBulge(y, thetaDeg, k);
+  const t = (thetaDeg * Math.PI) / 180;
+  return new Vector3(LV_CENTER.x + r * Math.cos(t), y, LV_CENTER.z + r * Math.sin(t));
+}
+
+/**
  * ÁRBOL CORONARIO (dominancia derecha, la más frecuente ~70–80 %).
  *  - Tronco común izquierdo (TCI) → DA + Cx.
  *  - DA (descendente anterior): surco interventricular anterior hasta el ápex;
@@ -95,35 +106,38 @@ const along = (pts: [number, number][]) => curve(pts.map(([y, th]) => lvSurface(
  *    dominancia derecha, la descendente posterior (cara inferior, 1/3 posterior
  *    del tabique) y la arteria del nodo AV.
  */
+/** Punto sobre el epicardio del VD (o del VI fuera del VD) con una pequeña separación. */
+function epi(y: number, thetaDeg: number, lift = 0.07): Vector3 {
+  const r = lvRadius(y) + rvBulge(y, thetaDeg) + lift;
+  const t = (thetaDeg * Math.PI) / 180;
+  return new Vector3(LV_CENTER.x + r * Math.cos(t), y, LV_CENTER.z + r * Math.sin(t));
+}
+const onEpi = (pts: [number, number][]) => curve(pts.map(([y, th]) => epi(y, th)));
+
 export const CORONARIES: Record<string, { label: string; r: number; curve: CatmullRomCurve3 }> = {
-  tci: { label: 'Tronco común izquierdo', r: 0.07, curve: curve([v(0.12, 0.95, -0.02), v(0.3, 1.0, 0.12), lvSurface(0.95, 70)]) },
+  tci: { label: 'Tronco común izquierdo', r: 0.07, curve: curve([v(0.12, 0.98, -0.02), v(0.3, 1.02, 0.1), lvSurface(0.95, 55)]) },
+  // DA: por el surco interventricular anterior (borde anterior del VD, θ ≈ 70°)
   da: {
     label: 'Descendente anterior (DA)',
     r: 0.06,
-    curve: along([[0.95, 70], [0.6, 88], [0.2, 92], [-0.3, 92], [-0.8, 88], [-1.25, 80], [-1.6, 60]]),
+    curve: along([[0.95, 55], [0.6, 66], [0.2, 69], [-0.3, 69], [-0.8, 68], [-1.25, 62], [-1.62, 40]]),
   },
-  diagonal: { label: '1.ª diagonal', r: 0.04, curve: along([[0.35, 90], [0.0, 70], [-0.4, 50], [-0.8, 40]]) },
+  diagonal: { label: '1.ª diagonal', r: 0.04, curve: along([[0.45, 66], [0.1, 48], [-0.3, 35], [-0.75, 28]]) },
   cx: {
     label: 'Circunfleja (Cx)',
     r: 0.055,
-    curve: along([[0.95, 70], [0.82, 40], [0.78, 0], [0.75, -40], [0.7, -80], [0.62, -110]]),
+    curve: along([[0.95, 55], [0.84, 30], [0.8, 0], [0.76, -40], [0.7, -80], [0.62, -105]]),
   },
-  marginalObtusa: { label: 'Marginal obtusa', r: 0.04, curve: along([[0.78, 5], [0.3, 0], [-0.3, -5], [-0.9, -10]]) },
+  marginalObtusa: { label: 'Marginal obtusa', r: 0.04, curve: along([[0.8, 0], [0.3, -5], [-0.3, -10], [-0.9, -15]]) },
+  // CD: surco auriculoventricular derecho, rodeando la base del VD hasta la cruz
   cd: {
     label: 'Coronaria derecha (CD)',
     r: 0.06,
-    curve: curve([
-      v(-0.08, 0.88, 0.25),
-      v(-0.45, 0.85, 0.72),
-      v(-1.0, 0.72, 0.6),
-      v(-1.32, 0.55, 0.05),
-      v(-1.05, 0.45, -0.5),
-      v(-0.55, 0.42, -0.85),
-      lvSurface(0.42, 225),
-    ]),
+    curve: curve([v(-0.05, 0.92, 0.22), epi(0.88, 100), epi(0.84, 140), epi(0.8, 180), epi(0.78, 215), epi(0.75, 248), lvSurface(0.6, 262)]),
   },
-  marginalAguda: { label: 'Marginal aguda', r: 0.04, curve: curve([v(-1.3, 0.58, 0.15), v(-1.25, 0.0, 0.3), v(-1.05, -0.6, 0.35)]) },
-  dp: { label: 'Descendente posterior (DP)', r: 0.05, curve: along([[0.42, 225], [0.0, 215], [-0.5, 212], [-1.0, 215], [-1.4, 230]]) },
+  marginalAguda: { label: 'Marginal aguda', r: 0.04, curve: onEpi([[0.82, 175], [0.3, 172], [-0.3, 168], [-0.85, 160]]) },
+  // DP: surco interventricular posterior (borde inferior del VD, θ ≈ 250°)
+  dp: { label: 'Descendente posterior (DP)', r: 0.05, curve: along([[0.6, 262], [0.1, 256], [-0.4, 254], [-0.9, 252], [-1.35, 250]]) },
 };
 
 /**

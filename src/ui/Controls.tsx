@@ -17,7 +17,7 @@ export function Controls() {
   const isNormal = useSim((s) => s.pathologyId === 'normal');
 
   return (
-    <section className="controls panel" aria-label="Controles de la simulación">
+    <section className="controls dock" aria-label="Controles de la simulación">
       <div className="controls-row">
         <button className="btn btn-primary play" onClick={togglePlay} aria-label={playing ? 'Pausar' : 'Reproducir'}>
           {playing ? '❚❚' : '▶'}

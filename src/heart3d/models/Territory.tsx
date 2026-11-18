@@ -8,7 +8,8 @@ import { DoubleSide, LatheGeometry, MeshBasicMaterial, Vector2 } from 'three';
 import { getPathology } from '../../pathologies/registry';
 import { useSim } from '../../store/useSimStore';
 import { CLIP_PLANES } from '../clipping';
-import { LV_CENTER, LV_PROFILE, lvRadius, RV_CENTER, RV_FLATTEN, RV_PROFILE, RV_ROT_Y } from './anatomy';
+import { LV_CENTER, LV_PROFILE, lvRadius } from './anatomy';
+import { buildRvGeometry } from './geometry';
 import { AHA_SEGMENTS } from './segments';
 
 const deg = Math.PI / 180;
@@ -62,7 +63,7 @@ export function Territory() {
     const segs = new Set(t3d?.segmentos ?? []);
     return AHA_SEGMENTS.filter((s) => segs.has(s.id)).map((s) => ({ id: s.id, g: segmentGeometry(s.y, s.theta) }));
   }, [t3d]);
-  const rvGeo = useMemo(() => new LatheGeometry(RV_PROFILE.map((p) => new Vector2(p.x * 1.03 + 0.01, p.y)), 40), []);
+  const rvGeo = useMemo(() => buildRvGeometry(1.06), []);
   const lvGeo = useMemo(() => new LatheGeometry(LV_PROFILE.map((p) => new Vector2(p.x * 1.02 + 0.01, p.y)), 48), []);
 
   // Latido luminoso del territorio
@@ -83,9 +84,7 @@ export function Territory() {
         {est.has('difuso') && <mesh geometry={lvGeo} material={diffuseMat} renderOrder={4} />}
       </group>
       {(est.has('vd') || est.has('difuso')) && (
-        <group position={RV_CENTER} rotation={[0, RV_ROT_Y, 0]} scale={[1, 1, RV_FLATTEN]}>
-          <mesh geometry={rvGeo} material={est.has('vd') ? mat : diffuseMat} renderOrder={4} />
-        </group>
+        <mesh geometry={rvGeo} material={est.has('vd') ? mat : diffuseMat} renderOrder={4} />
       )}
     </group>
   );

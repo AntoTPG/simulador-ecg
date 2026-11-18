@@ -21,7 +21,7 @@ function CameraRig() {
     // En paneles estrechos (móvil vertical) alejamos la cámara para que quepa todo
     const k = Math.max(1, 1.15 / (size.width / Math.max(1, size.height)));
     const d = 15 * k;
-    if (view === 'oblicua') camera.position.set(6.2 * k, 5 * k, 12.8 * k); // 3/4: se ven ambos planos
+    if (view === 'oblicua') camera.position.set(5.6 * k, 4.5 * k, 11.6 * k); // 3/4: se ven ambos planos
     else if (view === 'frontal') camera.position.set(0, 0, d);
     else if (view === 'horizontal') camera.position.set(0, d, 0.001); // desde arriba (cabeza del paciente)
     else if (view === 'lateral') camera.position.set(d, 0, 0); // desde el lado izquierdo
@@ -46,7 +46,7 @@ export function HeartScene() {
   const layers = useSim((s) => s.layers);
   return (
     <Canvas
-      camera={{ position: [6.2, 5, 12.8], fov: 42, near: 0.1, far: 200 }}
+      camera={{ position: [5.6, 4.5, 11.6], fov: 42, near: 0.1, far: 200 }}
       gl={{ antialias: true, localClippingEnabled: true } as never}
       onCreated={({ gl }) => {
         gl.localClippingEnabled = true;
