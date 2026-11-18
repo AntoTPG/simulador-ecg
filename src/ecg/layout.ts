@@ -1,0 +1,124 @@
+/**
+ * Disposición de las derivaciones sobre el papel (todas las medidas en mm y ms).
+ *
+ *  - CLÁSICO (3×4 + tira de ritmo): como un ECG impreso. Cada columna muestra
+ *    un cuarto consecutivo del registro (~2,5 s): I‑II‑III, aVR‑aVL‑aVF,
+ *    V1‑V2‑V3, V4‑V5‑V6, y debajo II durante los ~10 s completos.
+ *  - SIMULTÁNEO (6×2): las 12 derivaciones muestran a la vez la MISMA ventana
+ *    de tiempo. Más cómodo para comparar derivaciones latido a latido con el 3D.
+ */
+import { ECG_PAPER } from '../config/ecgPaper';
+import type { LeadName } from '../config/leads';
+
+export interface LeadBox {
+  lead: LeadName;
+  /** Esquina superior izquierda y tamaño (mm). */
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  /** Línea de base (mm). */
+  baseline: number;
+  /** Ventana de tiempo que representa (ms, relativa a la ventana actual). */
+  t0: number;
+  t1: number;
+  /** Si es la tira de ritmo larga. */
+  rhythm?: boolean;
+}
+
+export interface EcgLayoutSpec {
+  kind: 'clasico' | 'simultaneo';
+  widthMm: number;
+  heightMm: number;
+  boxes: LeadBox[];
+  /** Líneas de base donde se dibuja la calibración de 1 mV. */
+  calibrationRows: number[];
+  /** Duración de la ventana dinámica (solo en simultáneo). */
+  windowMs: number;
+}
+
+const msToMm = (ms: number) => (ms / 1000) * ECG_PAPER.speedMmPerS;
+
+export function classicLayout(durationMs: number): EcgLayoutSpec {
+  const colMs = durationMs / 4;
+  const colW = msToMm(colMs);
+  const rowH = 30;
+  const top = 2;
+  const left = ECG_PAPER.marginLeftMm;
+  const groups: LeadName[][] = [
+    ['I', 'II', 'III'],
+    ['aVR', 'aVL', 'aVF'],
+    ['V1', 'V2', 'V3'],
+    ['V4', 'V5', 'V6'],
+  ];
+  const boxes: LeadBox[] = [];
+  groups.forEach((g, c) =>
+    g.forEach((lead, r) =>
+      boxes.push({
+        lead,
+        x: left + c * colW,
+        y: top + r * rowH,
+        w: colW,
+        h: rowH,
+        baseline: top + r * rowH + rowH / 2,
+        t0: c * colMs,
+        t1: (c + 1) * colMs,
+      }),
+    ),
+  );
+  boxes.push({
+    lead: 'II',
+    x: left,
+    y: top + 3 * rowH,
+    w: colW * 4,
+    h: rowH,
+    baseline: top + 3 * rowH + rowH / 2,
+    t0: 0,
+    t1: durationMs,
+    rhythm: true,
+  });
+  return {
+    kind: 'clasico',
+    widthMm: left + 4 * colW + 2,
+    heightMm: top + 4 * rowH + 2,
+    boxes,
+    calibrationRows: [0, 1, 2, 3].map((r) => top + r * rowH + rowH / 2),
+    windowMs: durationMs,
+  };
+}
+
+export function simultaneousLayout(durationMs: number): EcgLayoutSpec {
+  const windowMs = durationMs / 4;
+  const colW = msToMm(windowMs);
+  const rowH = 24;
+  const top = 2;
+  const left = ECG_PAPER.marginLeftMm;
+  const gap = 4;
+  const cols: LeadName[][] = [
+    ['I', 'II', 'III', 'aVR', 'aVL', 'aVF'],
+    ['V1', 'V2', 'V3', 'V4', 'V5', 'V6'],
+  ];
+  const boxes: LeadBox[] = [];
+  cols.forEach((g, c) =>
+    g.forEach((lead, r) =>
+      boxes.push({
+        lead,
+        x: left + c * (colW + gap),
+        y: top + r * rowH,
+        w: colW,
+        h: rowH,
+        baseline: top + r * rowH + rowH / 2,
+        t0: 0,
+        t1: windowMs,
+      }),
+    ),
+  );
+  return {
+    kind: 'simultaneo',
+    widthMm: left + 2 * colW + gap + 2,
+    heightMm: top + 6 * rowH + 2,
+    boxes,
+    calibrationRows: [0, 1, 2, 3, 4, 5].map((r) => top + r * rowH + rowH / 2),
+    windowMs,
+  };
+}
