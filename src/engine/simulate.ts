@@ -11,7 +11,7 @@
  */
 import { computeLeads, type LeadSignals } from './leads';
 import { mod, skewGauss, smoothstep, type Vec3 } from './math';
-import { U_WAVE } from './normalWaves';
+import { FIBRILLATION_WAVE_MS, FLUTTER_CYCLE, FLUTTER_WAVE, U_WAVE } from './normalWaves';
 import { qtFromQtc, type SimParams } from './params';
 import { scheduleRhythm, type Beat } from './rhythm';
 import { waveExtent, type Lobe, type WaveKind } from './waves';
@@ -143,8 +143,18 @@ export function simulate(p: SimParams): SimResult {
     }
   };
 
+  // Actividad auricular independiente: P disociadas (BAV completo), F (flúter) y f (FA)
+  for (const a of schedule.atrial) {
+    if (a.kind === 'P') {
+      addWave(buf, p.waves.P, p.pDuration, a.t, dt);
+      pushSeg('P', a.t + extP[0] * p.pDuration, a.t + extP[1] * p.pDuration, -1);
+    } else if (a.kind === 'F') addWave(buf, FLUTTER_WAVE, FLUTTER_CYCLE, a.t, dt);
+    else if (a.v) addWave(buf, [{ at: 0.5, wl: 0.22, wr: 0.22, v: a.v }], FIBRILLATION_WAVE_MS, a.t, dt);
+  }
+
   for (const b of schedule.beats) {
-    const qt = qtFromQtc(p.qtc, 60000 / b.rr);
+    // El QT depende de la frecuencia ventricular (Bazett); se limita para RR extremos
+    const qt = qtFromQtc(p.qtc, Math.min(200, Math.max(25, 60000 / b.rr)));
     let pEnd: number | null = null;
 
     if (b.pOnset !== null) {

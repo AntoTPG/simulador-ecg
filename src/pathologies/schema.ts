@@ -49,6 +49,21 @@ export const modificationsSchema = z
         qtc: z.number().min(250).max(700),
       })
       .partial(),
+    /** Frecuencia sinusal propia de la patología (lpm), p. ej. taquicardia del TEP. */
+    frecuencia: z.number().min(20).max(250),
+    /** Eje del QRS en el plano frontal (grados): gira QRS y T (hemibloqueos, TEP…). */
+    ejeQRS: z.number().min(-180).max(180),
+    /** Ondas SUSTITUIDAS por completo (p. ej. el QRS de un bloqueo de rama izquierda). */
+    ondas: z.object({ P: z.array(lobe), QRS: z.array(lobe).min(1), T: z.array(lobe), U: z.array(lobe) }).partial(),
+    /** Ritmo: sinusal, bloqueos AV, fibrilación o flúter (ver engine/rhythm.ts). */
+    ritmo: z.discriminatedUnion('tipo', [
+      z.object({ tipo: z.literal('sinusal') }),
+      z.object({ tipo: z.literal('wenckebach'), conducidos: z.number().int().min(2).max(8), incremento: z.number().min(10).max(200) }),
+      z.object({ tipo: z.literal('mobitz2'), relacion: z.number().int().min(2).max(6) }),
+      z.object({ tipo: z.literal('bav3'), fcVentricular: z.number().min(15).max(70) }),
+      z.object({ tipo: z.literal('fa'), fcVentricular: z.number().min(40).max(200) }),
+      z.object({ tipo: z.literal('fluter'), conduccion: z.union([z.literal(2), z.literal(3), z.literal(4), z.literal('variable')]) }),
+    ]),
     /** Multiplicadores de amplitud de cada onda (1 = normal, 0 = desaparece). */
     amplitud: z
       .object({ P: z.number().min(0).max(5), QRS: z.number().min(0).max(5), T: z.number().min(-3).max(5), U: z.number().min(0).max(20) })

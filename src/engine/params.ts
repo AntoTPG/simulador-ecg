@@ -7,8 +7,19 @@ import type { Vec3 } from './math';
 import { NORMAL_QRS_AXIS, NORMAL_WAVES } from './normalWaves';
 import { rotateLobes, type Lobe, type WaveKind } from './waves';
 
-/** Tipo de ritmo. En la fase 1 solo el sinusal; el planificador ya admite más. */
-export type RhythmSpec = { kind: 'sinusal' };
+/** Tipo de ritmo (ver engine/rhythm.ts). */
+export type RhythmSpec =
+  | { kind: 'sinusal' }
+  /** BAV 2.º grado Mobitz I: `conducidos` P conducidas por grupo; `incremento` del PR (ms). */
+  | { kind: 'wenckebach'; conducidos: number; incremento: number }
+  /** BAV 2.º grado Mobitz II: `relacion` P por grupo (la última bloqueada). */
+  | { kind: 'mobitz2'; relacion: number }
+  /** BAV completo con escape a `fcVentricular`. */
+  | { kind: 'bav3'; fcVentricular: number }
+  /** Fibrilación auricular con respuesta ventricular media `fcVentricular`. */
+  | { kind: 'fa'; fcVentricular: number }
+  /** Flúter auricular con conducción fija (2:1, 3:1, 4:1) o variable. */
+  | { kind: 'fluter'; conduccion: 2 | 3 | 4 | 'variable' };
 
 export interface SimParams {
   heartRate: number;

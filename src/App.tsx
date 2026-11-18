@@ -159,18 +159,21 @@ export default function App() {
   return (
     <div className="app desktop">
       <Header />
-      <main className="desktop-main">
-        <div className="left-col">
-          <ScenePanel />
-          <VectorSection />
-        </div>
-        <div className="right-col">
-          <EcgSection />
-          <PathologyPanel />
-        </div>
-      </main>
+      {/* El contenido tiene su propio scroll; la barra de controles queda fija debajo y no tapa nada */}
+      <div className="scroll-area">
+        <main className="desktop-main">
+          <div className="left-col">
+            <ScenePanel />
+            <VectorSection />
+          </div>
+          <div className="right-col">
+            <EcgSection />
+            <PathologyPanel />
+          </div>
+        </main>
+        <Footer />
+      </div>
       <Controls />
-      <Footer />
     </div>
   );
 }

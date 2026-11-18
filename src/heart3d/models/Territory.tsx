@@ -8,7 +8,7 @@ import { DoubleSide, LatheGeometry, MeshBasicMaterial, Vector2 } from 'three';
 import { getPathology } from '../../pathologies/registry';
 import { useSim } from '../../store/useSimStore';
 import { CLIP_PLANES } from '../clipping';
-import { LV_CENTER, LV_PROFILE, lvRadius } from './anatomy';
+import { LA, LV_CENTER, LV_PROFILE, lvRadius, RA } from './anatomy';
 import { buildRvGeometry } from './geometry';
 import { AHA_SEGMENTS } from './segments';
 
@@ -83,6 +83,16 @@ export function Territory() {
         ))}
         {est.has('difuso') && <mesh geometry={lvGeo} material={diffuseMat} renderOrder={4} />}
       </group>
+      {est.has('auriculas') && (
+        <group>
+          <mesh material={diffuseMat} position={LA.center} scale={LA.r * 1.06} renderOrder={4}>
+            <sphereGeometry args={[1, 32, 20]} />
+          </mesh>
+          <mesh material={diffuseMat} position={RA.center} scale={[RA.r * 1.06, RA.r * 1.22, RA.r * 1.06]} renderOrder={4}>
+            <sphereGeometry args={[1, 32, 20]} />
+          </mesh>
+        </group>
+      )}
       {(est.has('vd') || est.has('difuso')) && (
         <mesh geometry={rvGeo} material={est.has('vd') ? mat : diffuseMat} renderOrder={4} />
       )}

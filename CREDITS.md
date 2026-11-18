@@ -2,7 +2,10 @@
 
 ## Modelo 3D
 - Corazón estilizado **procedural**, generado por código (`src/heart3d/models/`). No usa recursos externos.
-- *(Fase 3)* Aquí se citará el modelo glTF anatómico libre, con su autor, su licencia y el enlace a la fuente.
+- **Modelos externos evaluados (no incluidos):**
+  - «Human Heart 3d Model» de Sourav Pan (Biology Notes Online), en NIH 3D Print Exchange, 3DPX‑022787, **dominio público**: https://3d.nih.gov/entries/22787. Está descartado porque es muy esquemático (sin cavidades ni territorios) y perderíamos el mapa de activación y los segmentos AHA, que dependen de la geometría propia.
+  - BodyParts3D y Z‑Anatomy tienen licencia CC BY‑SA: son rigurosos, pero obligan a redistribuir el modelo con la misma licencia y su malla es muy pesada para el móvil.
+  - Para cambiar de modelo, ver `src/heart3d/models/HeartModel.ts`.
 
 ## Referencias del modelo eléctrico
 - Einthoven W. *Le télécardiogramme*. Arch Int Physiol, 1906. (Triángulo de Einthoven.)

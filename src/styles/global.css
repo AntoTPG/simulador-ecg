@@ -211,6 +211,9 @@ input:focus-visible,
 .slider b {
   color: var(--text);
 }
+.slider.is-disabled {
+  opacity: 0.5;
+}
 input[type='range'] {
   accent-color: var(--accent);
   width: 100%;
@@ -499,6 +502,9 @@ input[type='range'] {
 }
 .step {
   --c: var(--muted);
+  font-family: inherit;
+  border: 0;
+  cursor: pointer;
   text-align: center;
   font-weight: 800;
   font-size: 12.5px;
@@ -507,6 +513,9 @@ input[type='range'] {
   color: var(--muted);
   background: var(--surface-2);
   transition: all 0.25s ease;
+}
+.step:hover {
+  color: var(--text);
 }
 .step.is-on {
   color: #fff;
@@ -732,10 +741,26 @@ input[type='range'] {
   inset: 0;
 }
 
+/* Escritorio: la ventana no hace scroll; lo hace el área de contenido */
+.app.desktop {
+  height: 100dvh;
+  min-height: 0;
+}
+.scroll-area {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 2px 4px 6px;
+  margin: -2px -4px 0;
+  scrollbar-gutter: stable;
+}
+
 /* ===== Dock de controles ===== */
 .dock {
-  position: sticky;
-  bottom: 12px;
+  flex: none;
   z-index: 50;
   background: var(--glass);
   backdrop-filter: blur(16px) saturate(1.4);
@@ -758,6 +783,16 @@ input[type='range'] {
   height: 46px;
   border-radius: 50%;
   font-size: 15px;
+}
+.transport {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.time-readout {
+  font-size: 13px;
+  min-width: 52px;
+  color: var(--muted);
 }
 .compare-btn {
   display: inline-flex;

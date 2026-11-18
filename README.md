@@ -12,7 +12,28 @@ Aplicación educativa para estudiantes de Medicina: muestra el **vector cardíac
 |---|---|---|
 | 1 · MVP | Motor del dipolo, ECG normal de 12 derivaciones, corazón 3D con vector, bucles y ejes | ✅ |
 | 2 | Sistema de patologías (Zod), isquemias por arteria/fase, potasio, «comparar con normal» | ✅ |
-| 3 | Resto de patologías, PWA instalable, pulido móvil, modelo glTF libre | ⏳ |
+| 3 | Resto de patologías (conducción, arritmias, calcio, pericarditis, miocarditis, HVI, TEP, Brugada, QT largo, digital), PWA instalable, pulido móvil | ✅ |
+
+### Patologías incluidas
+
+- **Isquemia e infarto**: DA proximal y distal, Cx lateral y posterior, CD inferior, CD con VD (V3R/V4R), tronco común, subendocárdica frente a transmural. Fases: T hiperaguda → ST ↑ → Q → T invertida.
+- **Electrolitos**: hiperpotasemia (4 niveles), hipopotasemia (3), hiper e hipocalcemia.
+- **Conducción**:
+  - BRD (incompleto/completo), BRI, hemibloqueos anterior y posterior;
+  - WPW;
+  - bloqueos AV de 1.º, 2.º (Mobitz I, Mobitz II, 2:1) y 3.er grado (escape nodal o ventricular).
+- **Arritmias**: fibrilación auricular (respuesta lenta, controlada o rápida) y flúter típico (2:1, 4:1 o variable).
+- **Hipertrofia**: HVI (voltaje, sobrecarga).
+- **Otras**: pericarditis (estadios y derrame), miocarditis, TEP (S1Q3T3), Brugada (tipos 1 y 2), QT largo, efecto e intoxicación digitálica.
+
+## Instalarla como app (PWA)
+
+Abre https://antotpg.github.io/simulador-ecg/ y:
+- **Android (Chrome)**: menú ⋮ → «Instalar aplicación».
+- **iPhone/iPad (Safari)**: botón Compartir → «Añadir a pantalla de inicio».
+- **Ordenador (Chrome/Edge)**: icono de instalar en la barra de direcciones.
+
+Una vez instalada funciona **sin conexión** y se actualiza sola cuando se publica una versión nueva.
 
 ## Ejecutarla en tu ordenador
 

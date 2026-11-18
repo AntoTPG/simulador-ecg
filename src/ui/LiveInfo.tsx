@@ -5,9 +5,10 @@
 import { useEffect, useRef } from 'react';
 import { LEAD_INFO } from '../config/leads';
 import { LEAD_UNIT, leadVoltage } from '../engine/leads';
-import { dot, norm } from '../engine/math';
-import { sampleH, segmentAt, type SegmentKind } from '../engine/simulate';
+import { dot, mod, norm } from '../engine/math';
+import { beatAt, sampleH, segmentAt, type SegmentKind } from '../engine/simulate';
 import { PHASE_COLORS } from '../heart3d/frames';
+import { ventricularRate } from '../engine/measure';
 import { clock } from '../store/clock';
 import { useSim } from '../store/useSimStore';
 
@@ -50,13 +51,34 @@ export function PhaseStepper() {
     });
   }, [sim]);
 
+  /** Lleva el reloj al inicio de esa fase en el latido actual (o el siguiente) y pausa. */
+  const goTo = (k: Phase) => {
+    const s = useSim.getState();
+    const t = mod(clock.t, sim.duration);
+    const beat = beatAt(sim, t).index;
+    let target: number | null = null;
+    if (k === 'TP') {
+      const tSeg = sim.segments.find((x) => x.kind === 'T' && x.beat === beat) ?? sim.segments.find((x) => x.kind === 'T');
+      if (tSeg) target = tSeg.end + 30;
+    } else {
+      const seg =
+        sim.segments.find((x) => x.kind === k && x.beat === beat) ??
+        sim.segments.find((x) => x.kind === k && x.start > t) ??
+        sim.segments.find((x) => x.kind === k);
+      if (seg) target = seg.start + Math.min(8, (seg.end - seg.start) / 3);
+    }
+    if (target === null) return;
+    s.setPlaying(false);
+    clock.seek(mod(target, sim.duration));
+  };
+
   return (
     <div className="phase-stepper" ref={rootRef}>
       <div className="steps">
         {STEPS.map((s) => (
-          <span key={s.k} className="step" data-k={s.k}>
+          <button key={s.k} className="step" data-k={s.k} onClick={() => goTo(s.k)} title={`Ir a ${s.label} (pausa)`}>
             {s.label}
-          </span>
+          </button>
         ))}
       </div>
       <p ref={descRef} className="step-desc" />
@@ -67,7 +89,7 @@ export function PhaseStepper() {
 /** Frecuencia cardíaca con un corazón que late en cada QRS. */
 export function HeartRateBadge() {
   const sim = useSim((s) => s.sim);
-  const hr = useSim((s) => s.heartRate);
+  const hr = ventricularRate(sim);
   const heartRef = useRef<HTMLSpanElement>(null);
   useEffect(() => {
     let wasQrs = false;

@@ -115,13 +115,6 @@ export function PathologyPicker() {
               </div>
             ))}
             {!filtered.length && <p className="muted picker-empty">Sin resultados.</p>}
-            <div className="picker-group soon">
-              <div className="picker-group-title">Próximamente (fase 3)</div>
-              <p className="muted small">
-                Pericarditis, miocarditis, calcio, bloqueos de rama y hemibloqueos, HVI, WPW, bloqueos AV, FA, flúter, TEP, Brugada, QT largo y
-                efecto digitálico.
-              </p>
-            </div>
           </div>
         </div>
       )}

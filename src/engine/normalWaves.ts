@@ -63,6 +63,22 @@ const U: Lobe[] = [{ at: 0.5, wl: 0.2, wr: 0.2, v: [0.02, 0.018, 0.02] }];
 
 export const NORMAL_WAVES: Record<WaveKind, Lobe[]> = { P, QRS, T, U };
 
+/**
+ * ONDA F DEL FLÚTER TÍPICO (un ciclo de 200 ms). El circuito gira en sentido
+ * antihorario alrededor de la tricúspide: la activación del septo interauricular
+ * va de abajo arriba → descenso lento en II, III y aVF (vector hacia arriba) y
+ * subida rápida al cerrarse el circuito → "dientes de sierra". Las dos áreas son
+ * iguales para que la línea de base no se desplace.
+ */
+export const FLUTTER_WAVE: Lobe[] = [
+  { at: 0.45, wl: 0.18, wr: 0.14, v: [0.0, -0.12, 0.05] }, // área 0,32·0,12 ≈ 0,038
+  { at: 0.88, wl: 0.07, wr: 0.1, v: [0.0, 0.22, -0.094] }, // área 0,17·0,22 ≈ 0,037
+];
+export const FLUTTER_CYCLE = 200;
+
+/** Duración de cada onda f de la fibrilación auricular (ms). */
+export const FIBRILLATION_WAVE_MS = 120;
+
 /** Duración de la onda U (ms) y separación respecto al final de la T. */
 export const U_WAVE = { duration: 170, gapAfterT: 10 } as const;
 

@@ -151,7 +151,7 @@ export function drawLabel(
     ctx.strokeRect(box.x * px + 1, box.y * px + 1, box.w * px - 2, box.h * px - 2);
   }
   // Marca de separación entre columnas (como en el papel impreso)
-  if (!box.rhythm && box.t0 > 0) {
+  if (!box.rhythm && box.x > ECG_PAPER.marginLeftMm + 0.5) {
     ctx.beginPath();
     ctx.moveTo(box.x * px, (box.baseline - 3) * px);
     ctx.lineTo(box.x * px, (box.baseline + 3) * px);

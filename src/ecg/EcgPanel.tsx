@@ -3,7 +3,7 @@ import { ECG_PAPER } from '../config/ecgPaper';
 import { mod } from '../engine/math';
 import { clock } from '../store/clock';
 import { useSim } from '../store/useSimStore';
-import { classicLayout, simultaneousLayout } from './layout';
+import { classicLayout, simultaneousLayout, type LeadBox } from './layout';
 import { cursorX, drawCalibration, drawLabel, drawPaper, drawTrace, readColors } from './render';
 import { sampleSignal } from '../engine/simulate';
 import { resolvePathology } from '../engine/applyPathology';
@@ -93,17 +93,18 @@ export function EcgPanel() {
     const colors = readColors(wrapRef.current);
     drawPaper(ctx, layout, px, colors);
     for (const b of layout.calibrationRows) drawCalibration(ctx, b, px, colors.trace);
-    const offset = layout.kind === 'simultaneo' ? windowIdx * layout.windowMs : 0;
+    // Las cajas "windowed" (modo simultáneo) muestran la ventana actual
+    const off = (box: LeadBox) => (box.windowed ? windowIdx * layout.windowMs : 0);
     // «Comparar con normal»: trazado sano superpuesto en otro color
     if (compare && sim !== normalSim) {
       ctx.strokeStyle = colors.compare;
       ctx.lineWidth = Math.max(1, px * 0.3);
-      for (const box of layout.boxes) drawTrace(ctx, normalSim, box, px, box.t0, box.t1, offset);
+      for (const box of layout.boxes) drawTrace(ctx, normalSim, box, px, box.t0, box.t1, off(box));
     }
     // Con la comparación activa, el trazado patológico "futuro" se ve más para no confundirse con el sano
     ctx.strokeStyle = compare && sim !== normalSim ? colors.label : colors.faded;
     ctx.lineWidth = Math.max(1, px * 0.28);
-    for (const box of layout.boxes) drawTrace(ctx, sim, box, px, box.t0, box.t1, offset);
+    for (const box of layout.boxes) drawTrace(ctx, sim, box, px, box.t0, box.t1, off(box));
     for (const box of layout.boxes) {
       const role = afectadas.includes(box.lead) ? 'afectada' : reciprocas.includes(box.lead) ? 'reciproca' : null;
       drawLabel(ctx, box, px, colors.label, box.lead === selectedLead, colors.accent, role);
@@ -117,27 +118,29 @@ export function EcgPanel() {
     const cur = prep(curRef.current);
     if (!ink || !cur || !wrapRef.current) return;
     const colors = readColors(wrapRef.current);
-    let lastRel = -1;
+    let lastT = -1;
     let lastWin = -1;
+    const windowed = layout.boxes.some((b) => b.windowed);
 
     const unsub = clock.subscribe((tAbs) => {
       const t = mod(tAbs, sim.duration);
-      const win = layout.kind === 'simultaneo' ? Math.floor(t / layout.windowMs) : 0;
-      const offset = win * layout.windowMs;
-      const rel = t - offset;
-      if (layout.kind === 'simultaneo' && win !== windowIdx) setWindowIdx(win);
+      const win = windowed ? Math.floor(t / layout.windowMs) : 0;
+      if (windowed && win !== windowIdx) setWindowIdx(win);
+      const off = (box: LeadBox) => (box.windowed ? win * layout.windowMs : 0);
 
       ink.strokeStyle = colors.trace;
       ink.lineWidth = Math.max(1.2, px * 0.38);
-      if (win !== lastWin || rel < lastRel) {
-        // Nueva vuelta o salto atrás: se redibuja la tinta desde el principio
+      if (win !== lastWin || t < lastT) {
+        // Nueva vuelta, nueva ventana o salto atrás: se redibuja la tinta desde el principio
         ink.clearRect(0, 0, cssW, cssH);
-        for (const box of layout.boxes) drawTrace(ink, sim, box, px, 0, rel, offset);
-      } else if (rel > lastRel) {
-        const from = Math.max(0, lastRel - 4);
-        for (const box of layout.boxes) drawTrace(ink, sim, box, px, from, rel, offset);
+        for (const box of layout.boxes) drawTrace(ink, sim, box, px, 0, t - off(box), off(box));
+      } else if (t > lastT) {
+        for (const box of layout.boxes) {
+          const o = off(box);
+          drawTrace(ink, sim, box, px, Math.max(0, lastT - o - 4), t - o, o);
+        }
       }
-      lastRel = rel;
+      lastT = t;
       lastWin = win;
 
       // Cursor
@@ -146,7 +149,7 @@ export function EcgPanel() {
       cur.fillStyle = colors.cursor;
       cur.lineWidth = 1.5;
       for (const box of layout.boxes) {
-        const x = cursorX(box, rel, px);
+        const x = cursorX(box, t - off(box), px);
         if (x === null) continue;
         cur.beginPath();
         cur.moveTo(x, box.y * px);

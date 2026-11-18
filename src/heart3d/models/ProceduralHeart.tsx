@@ -174,6 +174,17 @@ export function ProceduralHeart() {
       aU.uRep.value = 0;
     }
     if (k !== 'QRS' && k !== 'PR' && k !== 'P') aU.uRep.value = 0;
+    // Flúter: un frente que gira sin parar (macrorreentrada, 300/min).
+    // FA: frentes caóticos que cambian continuamente.
+    const rk = sim.params.rhythm.kind;
+    if (rk === 'fluter') {
+      aU.uDep.value = (t % 200) / 200;
+      aU.uRep.value = 0;
+    } else if (rk === 'fa') {
+      const tick = Math.floor(t / 70);
+      aU.uDep.value = ((Math.sin(tick * 12.9898) * 43758.5453) % 1 + 1) % 1;
+      aU.uRep.value = 0;
+    }
 
     // --- Contracción (sístole) ---
     let vs = 0; // 0 = relajado, 1 = máxima contracción

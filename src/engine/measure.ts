@@ -68,6 +68,16 @@ export function measureAxis(sim: SimResult, beatIndex = 0): number {
   return rad2deg(Math.atan2(y, x));
 }
 
+/**
+ * Frecuencia VENTRICULAR media (lpm): número de QRS en el registro. Es la que
+ * se mide en el ECG y la que nota el paciente en el pulso; en un bloqueo AV o
+ * una FA no coincide con la frecuencia sinusal.
+ */
+export function ventricularRate(sim: SimResult): number {
+  const n = sim.beats.filter((b) => b.qrsOnset !== null).length;
+  return Math.round((n * 60000) / sim.duration);
+}
+
 /** Área neta (mV·ms) de una derivación durante el QRS de un latido. */
 export function qrsNetArea(sim: SimResult, lead: keyof SimResult['leads'], beatIndex = 0): number {
   const seg = sim.segments.find((s) => s.kind === 'QRS' && s.beat === beatIndex);

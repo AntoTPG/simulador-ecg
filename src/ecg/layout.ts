@@ -4,8 +4,8 @@
  *  - CLÁSICO (3×4 + tira de ritmo): como un ECG impreso. Cada columna muestra
  *    un cuarto consecutivo del registro (~2,5 s): I‑II‑III, aVR‑aVL‑aVF,
  *    V1‑V2‑V3, V4‑V5‑V6, y debajo II durante los ~10 s completos.
- *  - SIMULTÁNEO (6×2): las 12 derivaciones muestran a la vez la MISMA ventana
- *    de tiempo. Más cómodo para comparar derivaciones latido a latido con el 3D.
+ *  - SIMULTÁNEO (misma rejilla): las 12 derivaciones muestran a la vez la MISMA
+ *    ventana de tiempo. Más cómodo para comparar derivaciones latido a latido.
  */
 import { ECG_PAPER } from '../config/ecgPaper';
 import type { LeadName } from '../config/leads';
@@ -24,6 +24,11 @@ export interface LeadBox {
   t1: number;
   /** Si es la tira de ritmo larga. */
   rhythm?: boolean;
+  /**
+   * Si la caja muestra la VENTANA ACTUAL (modo simultáneo): sus tiempos son
+   * relativos al inicio de la ventana, que avanza con el reloj.
+   */
+  windowed?: boolean;
 }
 
 export interface EcgLayoutSpec {
@@ -33,9 +38,10 @@ export interface EcgLayoutSpec {
   boxes: LeadBox[];
   /** Líneas de base donde se dibuja la calibración de 1 mV. */
   calibrationRows: number[];
-  /** Duración de la ventana dinámica (solo en simultáneo). */
+  /** Duración de la ventana dinámica (cajas `windowed`). */
   windowMs: number;
 }
+
 
 const msToMm = (ms: number) => (ms / 1000) * ECG_PAPER.speedMmPerS;
 
@@ -117,45 +123,20 @@ export function classicLayout(durationMs: number, extra: readonly LeadName[] = [
   );
 }
 
+/**
+ * SIMULTÁNEO: misma rejilla que el clásico (3×4 + tira de ritmo), pero las 12
+ * derivaciones muestran la MISMA ventana de ~2,5 s, que avanza con el reloj.
+ * Así se ve todo el corazón en el mismo instante, como en los electrocardiógrafos
+ * que registran las 12 derivaciones a la vez. La tira de ritmo (II) sigue
+ * mostrando los ~10 s completos.
+ */
 export function simultaneousLayout(durationMs: number, extra: readonly LeadName[] = []): EcgLayoutSpec {
+  const base = classicLayout(durationMs, extra);
   const windowMs = durationMs / 4;
-  const colW = msToMm(windowMs);
-  const rowH = 24;
-  const top = 2;
-  const left = ECG_PAPER.marginLeftMm;
-  const gap = 4;
-  const cols: LeadName[][] = [
-    ['I', 'II', 'III', 'aVR', 'aVL', 'aVF'],
-    ['V1', 'V2', 'V3', 'V4', 'V5', 'V6'],
-  ];
-  const boxes: LeadBox[] = [];
-  cols.forEach((g, c) =>
-    g.forEach((lead, r) =>
-      boxes.push({
-        lead,
-        x: left + c * (colW + gap),
-        y: top + r * rowH,
-        w: colW,
-        h: rowH,
-        baseline: top + r * rowH + rowH / 2,
-        t0: 0,
-        t1: windowMs,
-      }),
-    ),
-  );
-  return addExtraRow(
-    {
-      kind: 'simultaneo',
-      widthMm: left + 2 * colW + gap + 2,
-      heightMm: top + 6 * rowH + 2,
-      boxes,
-      calibrationRows: [0, 1, 2, 3, 4, 5].map((r) => top + r * rowH + rowH / 2),
-      windowMs,
-    },
-    extra,
-    colW,
+  return {
+    ...base,
+    kind: 'simultaneo',
     windowMs,
-    rowH,
-    gap,
-  );
+    boxes: base.boxes.map((b) => (b.rhythm ? b : { ...b, t0: 0, t1: windowMs, windowed: true })),
+  };
 }

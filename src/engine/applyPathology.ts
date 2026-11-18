@@ -7,7 +7,7 @@
 import type { Modifications, Pathology } from '../pathologies/schema';
 import { add, normalize, scale, type Vec3 } from './math';
 import type { SimParams } from './params';
-import type { Lobe } from './waves';
+import { rotateLobes, type Lobe } from './waves';
 
 /** Combina las modificaciones de la patología con las del nivel elegido (el nivel manda). */
 export function mergeModifications(base: Modifications = {}, level: Modifications = {}): Modifications {
@@ -15,6 +15,7 @@ export function mergeModifications(base: Modifications = {}, level: Modification
   if (base.intervalos || level.intervalos) out.intervalos = { ...base.intervalos, ...level.intervalos };
   if (base.amplitud || level.amplitud) out.amplitud = { ...base.amplitud, ...level.amplitud };
   if (base.isquemia || level.isquemia) out.isquemia = { ...base.isquemia, ...level.isquemia };
+  if (base.ondas || level.ondas) out.ondas = { ...base.ondas, ...level.ondas };
   if (base.lobulosExtra || level.lobulosExtra) {
     const keys = ['P', 'QRS', 'T', 'U'] as const;
     out.lobulosExtra = Object.fromEntries(
@@ -118,10 +119,25 @@ export function applyModifications(base: SimParams, m: Modifications): SimParams
     prSegmentVector: [...base.prSegmentVector] as Vec3,
   };
 
-  // 1. Intervalos (valores absolutos)
+  // 1. Intervalos (valores absolutos) y frecuencia sinusal propia de la patología
   Object.assign(p, m.intervalos ?? {});
+  if (m.frecuencia) p.heartRate = m.frecuencia;
 
-  // 2. Amplitud y anchura de las ondas normales
+  // 2a. Ondas sustituidas por completo (p. ej. QRS de un bloqueo de rama izquierda)
+  for (const k of ['P', 'QRS', 'T', 'U'] as const) {
+    const w = m.ondas?.[k];
+    if (w) p.waves[k] = w.map((l) => ({ ...l, v: [...l.v] as Vec3 }));
+  }
+
+  // 2b. Desviación del eje (hemibloqueos, sobrecarga del VD…): se giran QRS y T en el plano frontal
+  if (m.ejeQRS !== undefined) {
+    const rot = m.ejeQRS - p.qrsAxis;
+    p.waves.QRS = rotateLobes(p.waves.QRS, rot);
+    p.waves.T = rotateLobes(p.waves.T, rot);
+    p.qrsAxis = m.ejeQRS;
+  }
+
+  // 2c. Amplitud y anchura de las ondas
   p.waves.P = scaleAmp(p.waves.P, m.amplitud?.P);
   p.waves.QRS = scaleAmp(p.waves.QRS, m.amplitud?.QRS);
   p.waves.T = scaleAmp(p.waves.T, m.amplitud?.T);
@@ -140,6 +156,12 @@ export function applyModifications(base: SimParams, m: Modifications): SimParams
 
   // 5. Isquemia
   if (m.isquemia) applyIschemia(p, m.isquemia);
+
+  // 6. Ritmo (bloqueos AV, FA, flúter)
+  if (m.ritmo) {
+    const { tipo, ...rest } = m.ritmo;
+    p.rhythm = { kind: tipo, ...rest } as SimParams['rhythm'];
+  }
 
   return p;
 }
