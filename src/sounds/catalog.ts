@@ -49,6 +49,24 @@ export type SoundElement =
 
 export type Split = 'fisiologico' | 'amplio' | 'fijo' | 'paradojico' | 'unico';
 
+/**
+ * Grabación REAL de la Heart Sound and Murmur Library (Universidad de Michigan,
+ * CC BY‑SA 4.0). Archivos en public/audio/michigan (recortados a 30 s y
+ * recodificados a 64 kbps; ver LICENCIA.txt en esa carpeta).
+ */
+export interface Recording {
+  /** Nombre del MP3 original. */
+  archivo: string;
+  /** Qué se oye (traducción del título original). */
+  titulo: string;
+  /** Foco, postura y parte del estetoscopio con que se grabó. */
+  como: string;
+  /** Esquema fonocardiográfico original (PNG), si existe. */
+  esquema?: string;
+  /** Aclaración cuando la grabación no corresponde exactamente al ruido. */
+  nota?: string;
+}
+
 export interface HeartSoundDef {
   id: string;
   nombre: string;
@@ -68,6 +86,10 @@ export interface HeartSoundDef {
   hemo?: Partial<HemoParams>;
   /** Patología del ECG relacionada (id del desplegable de patologías). */
   ecgAsociado?: string;
+  /** Separación entre los componentes mitral y tricuspídeo del R1 (ms). */
+  r1Split?: number;
+  /** Grabaciones reales disponibles para este ruido. */
+  grabaciones?: Recording[];
 }
 
 export const HEART_SOUNDS: HeartSoundDef[] = [
@@ -87,6 +109,10 @@ export const HEART_SOUNDS: HeartSoundDef[] = [
     ],
     desdoblamiento: 'fisiologico',
     p2: 0.35,
+    grabaciones: [
+      { archivo: '01_apex_normal_s1_s2_supine_bell.mp3', titulo: 'R1 y R2 normales', como: 'Ápex · decúbito supino · campana', esquema: 'single_s1_s2_normal.png' },
+      { archivo: '14_aortic_normal_s1_s2_sitting_bell.mp3', titulo: 'R1 y R2 normales', como: 'Foco aórtico · sentado · campana', esquema: 'aortic-normal_s1_s2.png' },
+    ],
     elementos: [],
   },
   {
@@ -104,6 +130,9 @@ export const HEART_SOUNDS: HeartSoundDef[] = [
     ],
     desdoblamiento: 'fisiologico',
     p2: 0.85,
+    grabaciones: [
+      { archivo: '20_pulm_spilt_s2_transient_supine_diaph.mp3', titulo: 'Desdoblamiento transitorio (fisiológico) del R2', como: 'Foco pulmonar · decúbito supino · membrana', esquema: 'pulmonic-split_s2_transient.png' },
+    ],
     elementos: [],
   },
   {
@@ -121,8 +150,32 @@ export const HEART_SOUNDS: HeartSoundDef[] = [
     ],
     desdoblamiento: 'fisiologico',
     p2: 0.35,
+    grabaciones: [
+      { archivo: '05_apex_s3_lld_bell.mp3', titulo: 'Tercer ruido (R3)', como: 'Ápex · decúbito lateral izquierdo · campana', esquema: 's3_gallop.png', nota: 'La grabación muestra un R3; que sea fisiológico o patológico depende de la edad y del contexto clínico.' },
+    ],
     elementos: [{ tipo: 'R3' }],
     hemo: { tauFill: 65 },
+  },
+  {
+    id: 'desdoblamiento-r1',
+    nombre: 'Desdoblamiento del R1',
+    tipo: 'fisiologico',
+    grupo: 'Ruidos normales',
+    foco: 'tricuspideo',
+    estetoscopio: 'membrana',
+    patron: '«l‑lub‑dub»: R1 con dos componentes muy próximos (M1‑T1)',
+    explicacion: [
+      'El R1 tiene dos componentes: el cierre mitral (M1) y, unos milisegundos después, el tricuspídeo (T1), porque el VI se activa y contrae ligeramente antes que el VD.',
+      'En muchas personas sanas se oyen separados en el borde esternal izquierdo bajo. Se ensancha cuando el VD se activa tarde (bloqueo de rama derecha).',
+      'No hay que confundirlo con un R4 (grave, antes del R1) ni con un clic de eyección (agudo, después del R1).',
+    ],
+    desdoblamiento: 'fisiologico',
+    r1Split: 42,
+    p2: 0.4,
+    grabaciones: [
+      { archivo: '02_apex_split_s1_supine_bell.mp3', titulo: 'Desdoblamiento del R1', como: 'Ápex · decúbito supino · campana', esquema: 'split_s1_normal.png' },
+    ],
+    elementos: [],
   },
   {
     id: 'soplo-inocente',
@@ -139,6 +192,9 @@ export const HEART_SOUNDS: HeartSoundDef[] = [
     ],
     desdoblamiento: 'fisiologico',
     p2: 0.4,
+    grabaciones: [
+      { archivo: '21_pulm_eject_sys_mur__trans_split_s2_supine_diaph.mp3', titulo: 'Soplo sistólico eyectivo con desdoblamiento transitorio del R2', como: 'Foco pulmonar · decúbito supino · membrana', esquema: 'pulmonic-ejection_systolic_murmur_with_transient_splitting_s2.png', nota: 'Soplo eyectivo con desdoblamiento normal del R2: el patrón típico de un soplo funcional (de flujo).' },
+    ],
     elementos: [{ tipo: 'soplo', forma: 'eyectivoSuave', tono: 'medio', intensidad: 0.35 }],
   },
 
@@ -158,6 +214,9 @@ export const HEART_SOUNDS: HeartSoundDef[] = [
     ],
     desdoblamiento: 'fisiologico',
     p2: 0.4,
+    grabaciones: [
+      { archivo: '05_apex_s3_lld_bell.mp3', titulo: 'Galope por tercer ruido (R3)', como: 'Ápex · decúbito lateral izquierdo · campana', esquema: 's3_gallop.png' },
+    ],
     elementos: [{ tipo: 'R3' }],
     hemo: { esv: 125, fillVol: 70, edpRef: 22, psys: 105, tauFill: 60 },
   },
@@ -176,6 +235,9 @@ export const HEART_SOUNDS: HeartSoundDef[] = [
     ],
     desdoblamiento: 'fisiologico',
     p2: 0.4,
+    grabaciones: [
+      { archivo: '03_apex_s4_lld_bell.mp3', titulo: 'Galope por cuarto ruido (R4)', como: 'Ápex · decúbito lateral izquierdo · campana', esquema: 's4_gallop.png' },
+    ],
     elementos: [{ tipo: 'R4' }],
     hemo: { edpRef: 22, kickVol: 24, aWave: 9, esv: 45, fillVol: 45 },
     ecgAsociado: 'hvi',
@@ -213,6 +275,9 @@ export const HEART_SOUNDS: HeartSoundDef[] = [
     ],
     desdoblamiento: 'amplio',
     p2: 0.9,
+    grabaciones: [
+      { archivo: '19_pulm_spilt_s2_persistent_supine_diaph.mp3', titulo: 'Desdoblamiento persistente del R2', como: 'Foco pulmonar · decúbito supino · membrana', nota: '«Persistente» = se oye también en espiración. Si además no varía con la respiración, es fijo.' },
+    ],
     elementos: [],
     ecgAsociado: 'bloqueo-rama-derecha',
   },
@@ -231,6 +296,10 @@ export const HEART_SOUNDS: HeartSoundDef[] = [
     ],
     desdoblamiento: 'fijo',
     p2: 0.9,
+    grabaciones: [
+      { archivo: '22_pulm_split_s2__eject_sys_mur_supine_diaph.mp3', titulo: 'Desdoblamiento del R2 con soplo sistólico eyectivo', como: 'Foco pulmonar · decúbito supino · membrana', nota: 'Desdoblamiento + soplo eyectivo pulmonar: el patrón auscultatorio que acompaña a la CIA.' },
+      { archivo: '19_pulm_spilt_s2_persistent_supine_diaph.mp3', titulo: 'Desdoblamiento persistente del R2', como: 'Foco pulmonar · decúbito supino · membrana' },
+    ],
     elementos: [{ tipo: 'soplo', forma: 'eyectivoSuave', tono: 'medio', intensidad: 0.4 }],
   },
   {
@@ -251,6 +320,26 @@ export const HEART_SOUNDS: HeartSoundDef[] = [
     ecgAsociado: 'bloqueo-rama-izquierda',
   },
 
+  {
+    id: 'r2-unico',
+    nombre: 'R2 único',
+    tipo: 'patologico',
+    grupo: 'Desdoblamientos del R2',
+    foco: 'pulmonar',
+    estetoscopio: 'membrana',
+    patron: 'R2 sin desdoblamiento, ni siquiera en inspiración',
+    explicacion: [
+      'Solo se oye un componente del R2, también en la inspiración. Puede ser normal en ancianos (el P2 es débil y se oye poco).',
+      'Es patológico cuando falta un componente (estenosis aórtica grave calcificada sin A2; atresia o estenosis pulmonar grave sin P2) o cuando ambos coinciden (hipertensión pulmonar, desdoblamiento paradójico en inspiración).',
+    ],
+    desdoblamiento: 'unico',
+    p2: 0,
+    grabaciones: [
+      { archivo: '18_pulm_single_s2_supine_diaph.mp3', titulo: 'R2 único', como: 'Foco pulmonar · decúbito supino · membrana', esquema: 'pulmonic-single_s2.png' },
+    ],
+    elementos: [],
+  },
+
   // ======================= CLICS Y CHASQUIDOS =======================
   {
     id: 'clic-eyeccion',
@@ -267,6 +356,9 @@ export const HEART_SOUNDS: HeartSoundDef[] = [
     ],
     desdoblamiento: 'fisiologico',
     p2: 0.4,
+    grabaciones: [
+      { archivo: '23_pulm_eject_sys_mur__single_s2__eject_click_supine_diaph.mp3', titulo: 'Clic de eyección, soplo sistólico eyectivo y R2 único', como: 'Foco pulmonar · decúbito supino · membrana', esquema: 'pulmonic-ejection_systolic_murmur_single_s2_ejection_click.png', nota: 'En este caso el clic es pulmonar (p. ej., estenosis pulmonar valvular).' },
+    ],
     elementos: [{ tipo: 'clicEyeccion' }, { tipo: 'soplo', forma: 'romboidal', tono: 'medio', intensidad: 0.3 }],
   },
   {
@@ -284,6 +376,11 @@ export const HEART_SOUNDS: HeartSoundDef[] = [
     ],
     desdoblamiento: 'fisiologico',
     p2: 0.4,
+    grabaciones: [
+      { archivo: '04_apex_mid_sys_click_supine_bell.mp3', titulo: 'Clic mesosistólico', como: 'Ápex · decúbito supino · campana', esquema: 'mid-systolic-click_mitral_valve_prolapse.png' },
+      { archivo: '10_apex_sys_click__late_sys_mur_lld_bell.mp3', titulo: 'Clic sistólico y soplo telesistólico', como: 'Ápex · decúbito lateral izquierdo · campana' },
+      { archivo: '08_apex_late_sys_mur_supine_bell.mp3', titulo: 'Soplo telesistólico', como: 'Ápex · decúbito supino · campana', esquema: 'late-systolic-murmur.png' },
+    ],
     elementos: [{ tipo: 'clicMesosistolico' }, { tipo: 'soplo', forma: 'telesistolico', tono: 'agudo', intensidad: 0.5 }],
     hemo: { mrFrac: 0.12, vWave: 10 },
   },
@@ -304,6 +401,11 @@ export const HEART_SOUNDS: HeartSoundDef[] = [
     ],
     desdoblamiento: 'paradojico',
     p2: 0.6,
+    grabaciones: [
+      { archivo: '15_aortic_sys_mur__absent_s2_sitting_bell.mp3', titulo: 'Soplo sistólico con R2 ausente', como: 'Foco aórtico · sentado · campana', esquema: 'aortic-systolic_murmur_with_absent_s2.png', nota: 'En la estenosis aórtica grave la válvula calcificada apenas se mueve y el A2 desaparece.' },
+      { archivo: '07_apex_mid_sys_mur_supine_bell.mp3', titulo: 'Soplo mesosistólico', como: 'Ápex · decúbito supino · campana', esquema: 'mid-systolic-murmur.png' },
+      { archivo: '11_apex_s4__mid_sys_mur_lld_bell.mp3', titulo: 'R4 y soplo mesosistólico', como: 'Ápex · decúbito lateral izquierdo · campana', esquema: 's4_and_mid-systolic_murmur.png', nota: 'Soplo eyectivo + R4 de un ventrículo hipertrófico y rígido.' },
+    ],
     elementos: [{ tipo: 'soplo', forma: 'romboidal', tono: 'medio', intensidad: 0.85 }, { tipo: 'R4' }],
     hemo: { aoGrad: 65, psys: 108, edpRef: 15, kickVol: 20, aWave: 7 },
     ecgAsociado: 'hvi',
@@ -324,6 +426,10 @@ export const HEART_SOUNDS: HeartSoundDef[] = [
     desdoblamiento: 'fisiologico',
     r1: 0.6,
     p2: 0.4,
+    grabaciones: [
+      { archivo: '09_apex_holo_sys_mur_supine_bell.mp3', titulo: 'Soplo holosistólico', como: 'Ápex · decúbito supino · campana', esquema: 'holosystolic-murmur.png' },
+      { archivo: '12_apex_s3__holo_sys_mur_lld_bell.mp3', titulo: 'R3 y soplo holosistólico', como: 'Ápex · decúbito lateral izquierdo · campana', esquema: 's3_and_holosystolic_murmur.png' },
+    ],
     elementos: [{ tipo: 'soplo', forma: 'holosistolico', tono: 'agudo', intensidad: 0.75 }, { tipo: 'R3' }],
     hemo: { mrFrac: 0.4, esv: 45, fillVol: 85, edpRef: 12, tauFill: 70 },
   },
@@ -342,6 +448,9 @@ export const HEART_SOUNDS: HeartSoundDef[] = [
     ],
     desdoblamiento: 'fisiologico',
     p2: 0.6,
+    grabaciones: [
+      { archivo: '06_apex_early_sys_mur_supine_bell.mp3', titulo: 'Soplo protosistólico', como: 'Ápex · decúbito supino · campana', esquema: 'early-systolic-murmur.png', nota: 'Soplo que ocupa solo la primera parte de la sístole, como el de una CIV muscular pequeña (el chorro se cierra al contraerse el tabique). No es el soplo holosistólico típico.' },
+    ],
     elementos: [{ tipo: 'soplo', forma: 'holosistolico', tono: 'medio', intensidad: 0.95 }],
     hemo: { mrFrac: 0.25, fillVol: 75 },
   },
@@ -362,6 +471,10 @@ export const HEART_SOUNDS: HeartSoundDef[] = [
     ],
     desdoblamiento: 'fisiologico',
     p2: 0.4,
+    grabaciones: [
+      { archivo: '16_aortic_early_dias_mur_sitting_bell.mp3', titulo: 'Soplo protodiastólico', como: 'Foco aórtico · sentado · campana', esquema: 'aortic-early_diastolic_murmur.png' },
+      { archivo: '17_aortic_sys__dias_mur_sitting_bell.mp3', titulo: 'Soplos sistólico y diastólico (doble lesión aórtica)', como: 'Foco aórtico · sentado · campana', esquema: 'aortic-systolic_and_diastolic_murmurs.png' },
+    ],
     elementos: [{ tipo: 'soplo', forma: 'decreciente', tono: 'agudo', intensidad: 0.6 }, { tipo: 'soplo', forma: 'eyectivoSuave', tono: 'medio', intensidad: 0.35 }],
     hemo: { tau: 600, pInf: 0, arLeak: 60, psys: 160, edpRef: 14 },
   },
@@ -381,6 +494,9 @@ export const HEART_SOUNDS: HeartSoundDef[] = [
     desdoblamiento: 'fisiologico',
     r1: 1.6,
     p2: 0.6,
+    grabaciones: [
+      { archivo: '13_apex_os__dias_mur_lld_bell.mp3', titulo: 'Chasquido de apertura y soplo diastólico', como: 'Ápex · decúbito lateral izquierdo · campana', esquema: 'mitral_opening_snap_and_diastolic_murmur.png' },
+    ],
     elementos: [
       { tipo: 'chasquidoApertura', retraso: 70 },
       { tipo: 'soplo', forma: 'retumbo', tono: 'grave', intensidad: 0.85 },

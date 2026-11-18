@@ -1,0 +1,20 @@
+Grabaciones y esquemas de ruidos cardíacos
+==========================================
+
+Origen:
+  Judge, Richard; Mangrulkar, Rajesh. "Heart Sound and Murmur Library".
+  University of Michigan Medical School / Open.Michigan, abril de 2015.
+  https://hdl.handle.net/2027.42/120554
+
+Licencia:
+  Creative Commons Reconocimiento-CompartirIgual 4.0 Internacional (CC BY-SA 4.0)
+  https://creativecommons.org/licenses/by-sa/4.0/deed.es
+
+Cambios realizados (adaptación):
+  - Archivos MP3: recortados a los primeros 30 segundos (con fundido final de 1,5 s)
+    y recodificados a MP3 mono, 22,05 kHz, 64 kbps para reducir el tamaño de la app.
+  - Esquemas PNG: sin cambios.
+  - Los títulos se han traducido al español en la interfaz.
+
+Estos archivos (y cualquier adaptación de ellos) se distribuyen bajo la misma
+licencia CC BY-SA 4.0. El resto del código del simulador es independiente.

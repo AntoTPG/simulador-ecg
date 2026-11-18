@@ -41,7 +41,22 @@ export default defineConfig(({ mode }) => ({
             },
             workbox: {
               globPatterns: ['**/*.{js,css,html,png,svg,glb,woff2}'],
+              // Las grabaciones reales (~6 MB) no se descargan al instalar la app:
+              // se guardan en caché la primera vez que se escuchan
+              globIgnores: ['**/audio/**'],
               maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
+              runtimeCaching: [
+                {
+                  urlPattern: ({ url }) => url.pathname.includes('/audio/'),
+                  handler: 'CacheFirst',
+                  options: {
+                    cacheName: 'grabaciones-michigan',
+                    expiration: { maxEntries: 60 },
+                    rangeRequests: true,
+                    cacheableResponse: { statuses: [0, 200] },
+                  },
+                },
+              ],
             },
           }),
         ]),

@@ -5,6 +5,7 @@
 import { FOCO_INFO, HEART_SOUNDS, SOUND_GROUPS, getSound, type Foco } from '../sounds/catalog';
 import { getPathology } from '../pathologies/registry';
 import { useSim } from '../store/useSimStore';
+import { Recordings } from './Recordings';
 
 /** Posición de cada foco en el esquema del tórax (coordenadas del SVG). */
 const FOCO_POS: Record<Foco, [number, number]> = {
@@ -50,7 +51,11 @@ export function HeartSoundsPanel() {
         <h2 id="sounds-title">Ruidos cardíacos</h2>
         <button
           className={`btn listen-btn${audioOn ? ' is-on' : ''}`}
-          onClick={() => setAudioOn(!audioOn)}
+          onClick={() => {
+            // Si suena una grabación real, se para: solo una cosa sonando a la vez
+            if (!audioOn) document.querySelectorAll('audio').forEach((a) => a.pause());
+            setAudioOn(!audioOn);
+          }}
           aria-pressed={audioOn}
           title="Reproduce el sonido sintetizado, sincronizado con el ECG y el diagrama (pone la velocidad a 1×)"
         >
@@ -100,21 +105,27 @@ export function HeartSoundsPanel() {
           <p key={i}>{t}</p>
         ))}
       </div>
+      {def.grabaciones && def.grabaciones.length > 0 && <Recordings key={def.id} items={def.grabaciones} />}
       {ecg && ecg.id !== pathologyId && (
         <button className="btn btn-small" onClick={() => setPathology(ecg.id)}>
           Ver el ECG asociado: {ecg.nombre}
         </button>
       )}
       <p className="sources small muted">
-        Sonido sintetizado con el modelo (mejor con auriculares). Contenido basado en el{' '}
+        «Escuchar» reproduce un sonido sintetizado con el modelo y sincronizado con la animación (mejor con auriculares). Contenido basado en el{' '}
         <a href="https://www.msdmanuals.com/es/professional/trastornos-cardiovasculares/abordaje-del-paciente-card%C3%ADaco/auscultaci%C3%B3n-card%C3%ADaca" target="_blank" rel="noreferrer">
           Manual MSD, «Auscultación cardíaca»
         </a>
-        . Grabaciones reales:{' '}
+
+        . Grabaciones reales: Judge R., Mangrulkar R.,{' '}
         <a href="https://hdl.handle.net/2027.42/120554" target="_blank" rel="noreferrer">
-          Heart Sound and Murmur Library (Univ. de Michigan, CC BY‑SA 4.0)
+          Heart Sound and Murmur Library
+        </a>{' '}
+        (University of Michigan Medical School, 2015),{' '}
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.es" target="_blank" rel="noreferrer">
+          CC BY‑SA 4.0
         </a>
-        .
+        ; recortadas a 30 s y recodificadas.
       </p>
     </section>
   );

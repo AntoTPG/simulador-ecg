@@ -16,8 +16,8 @@
 
 ## Ruidos cardíacos
 - Explicaciones elaboradas a partir del **Manual MSD** (versión para profesionales), «Auscultación cardíaca» (Gupta J. I., Shea M. J., rev. abr. 2025): https://www.msdmanuals.com/es/professional/trastornos-cardiovasculares/abordaje-del-paciente-card%C3%ADaco/auscultaci%C3%B3n-card%C3%ADaca
-- Grabaciones reales de referencia (enlazadas, no incluidas): Judge R., Mangrulkar R. *Heart Sound and Murmur Library*. University of Michigan Medical School / Open.Michigan, 2015. Licencia **CC BY‑SA 4.0**: https://hdl.handle.net/2027.42/120554
-- Los sonidos de la app se sintetizan a partir del modelo hemodinámico propio; no son grabaciones.
+- **Grabaciones reales y esquemas** (incluidos en `public/audio/michigan/`): Judge R., Mangrulkar R. *Heart Sound and Murmur Library*. University of Michigan Medical School / Open.Michigan, 2015. Licencia **CC BY‑SA 4.0**: https://hdl.handle.net/2027.42/120554. Los MP3 están recortados a 30 s y recodificados a 64 kbps; los esquemas, sin cambios. Estos archivos se redistribuyen con la misma licencia (ver `public/audio/michigan/LICENCIA.txt`).
+- El botón «Escuchar» reproduce un sonido sintetizado a partir del modelo hemodinámico propio, sincronizado con la animación.
 
 ## Bibliotecas
 React, three.js, @react-three/fiber, @react-three/drei, Zustand, Zod, Vite y Vitest. Todas tienen licencia MIT.

@@ -1,3 +1,5 @@
+import { existsSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { paramsForPathology } from '../engine/applyPathology';
 import { defaultParams } from '../engine/params';
@@ -23,6 +25,19 @@ describe('Catálogo de ruidos cardíacos', () => {
       expect(s.explicacion.length).toBeLessThanOrEqual(4);
       if (s.ecgAsociado) expect(getPathology(s.ecgAsociado).id).toBe(s.ecgAsociado);
     }
+  });
+
+  it('cada grabación real y cada esquema citados existen en public/audio/michigan', () => {
+    const dir = resolve(__dirname, '../../public/audio/michigan');
+    let n = 0;
+    for (const s of HEART_SOUNDS)
+      for (const r of s.grabaciones ?? []) {
+        expect(existsSync(resolve(dir, r.archivo)), r.archivo).toBe(true);
+        if (r.esquema) expect(existsSync(resolve(dir, r.esquema)), r.esquema).toBe(true);
+        n++;
+      }
+    expect(n).toBeGreaterThanOrEqual(20);
+    expect(existsSync(resolve(dir, 'LICENCIA.txt'))).toBe(true);
   });
 
   it('incluye ruidos fisiológicos y patológicos', () => {

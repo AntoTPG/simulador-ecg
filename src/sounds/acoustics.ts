@@ -59,7 +59,7 @@ export function buildAcousticEvents(cycle: Cycle, def: HeartSoundDef): AcousticE
     const prFactor = Math.min(1.4, Math.max(0.45, 1.35 - (pr - 120) / 260));
     const a1 = prFactor * (def.r1 ?? 1);
     ev.push({ kind: 'tono', label: 'R1', t: b.mc, f: 62, tau: 0.024, amp: a1 });
-    ev.push({ kind: 'tono', label: 'T1', t: b.mc + 22, f: 52, tau: 0.02, amp: 0.55 * a1 });
+    ev.push({ kind: 'tono', label: 'T1', t: b.mc + (def.r1Split ?? 22), f: 52, tau: 0.02, amp: 0.55 * a1 });
 
     // R2 = A2 + P2
     const s = splitMs(def.desdoblamiento, b.ac);

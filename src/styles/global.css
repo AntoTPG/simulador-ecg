@@ -1449,3 +1449,63 @@ input[type='range'] {
 .mobile .wiggers-wrap {
   height: 400px;
 }
+
+/* Grabaciones reales */
+.recordings {
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  border-radius: 12px;
+  padding: 10px 12px;
+}
+.recordings-title {
+  font-weight: 800;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+.recordings ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.rec-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 8px;
+  align-items: baseline;
+  margin-bottom: 4px;
+}
+.rec audio {
+  width: 100%;
+  height: 36px;
+}
+.rec-note {
+  margin: 4px 0 0;
+  color: var(--muted);
+}
+.rec-error {
+  color: var(--warn-text);
+  background: var(--warn-bg);
+  border-radius: 8px;
+  padding: 4px 8px;
+  margin: 0;
+}
+.rec-scheme {
+  display: block;
+  max-width: 100%;
+  margin-top: 6px;
+  border-radius: 8px;
+  background: #fff;
+  padding: 4px;
+}
+.link-btn {
+  font: inherit;
+  background: none;
+  border: 0;
+  padding: 2px 0;
+  color: var(--accent);
+  cursor: pointer;
+  text-decoration: underline;
+}
