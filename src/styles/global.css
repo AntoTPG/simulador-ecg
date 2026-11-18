@@ -1444,7 +1444,10 @@ input[type='range'] {
   }
 }
 .mobile .tabs {
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
+}
+.mobile .tab {
+  font-size: 11px;
 }
 .mobile .wiggers-wrap {
   height: 400px;
@@ -1508,4 +1511,222 @@ input[type='range'] {
   color: var(--accent);
   cursor: pointer;
   text-decoration: underline;
+}
+
+/* ===== Cardiopatías congénitas ===== */
+.cg-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.cg-head h2 {
+  margin: 0;
+}
+.cg-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+.sound-chip.acianogena {
+  border-left: 3px solid #f59e0b;
+}
+.cg-body {
+  display: grid;
+  grid-template-columns: minmax(320px, 1.15fr) 1fr;
+  gap: 16px;
+  align-items: start;
+  animation: fade 0.35s ease both;
+}
+.cg-figure {
+  margin: 0;
+}
+.cg-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  background: var(--surface-2);
+  border-radius: 14px;
+  border: 1px solid var(--border);
+}
+.cg-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  margin-top: 6px;
+}
+.cg-scale i {
+  display: inline-block;
+  width: 90px;
+  height: 8px;
+  border-radius: 4px;
+  vertical-align: middle;
+}
+.cg-organ {
+  fill: var(--surface);
+  stroke: var(--border);
+  stroke-width: 2;
+}
+.cg-organ.lungs {
+  fill: color-mix(in srgb, #f472b6 14%, var(--surface));
+}
+.cg-organ-label {
+  fill: var(--text);
+  font: 700 15px system-ui, sans-serif;
+}
+.cg-organ-label.small {
+  font-size: 12px;
+}
+.cg-heart {
+  fill: color-mix(in srgb, #b83a46 22%, var(--surface));
+  stroke: #b83a46;
+  stroke-width: 2;
+}
+.cg-chamber {
+  stroke: color-mix(in srgb, #7f1d1d 70%, transparent);
+  stroke-width: 3;
+  transition: fill 0.4s ease;
+}
+.cg-chamber.hyper {
+  stroke: #7f1d1d;
+  stroke-width: 11;
+}
+.cg-chamber.dilated {
+  stroke-dasharray: 8 4;
+}
+.cg-chamber-name {
+  fill: #fff;
+  font: 800 17px system-ui, sans-serif;
+  paint-order: stroke;
+  stroke: rgba(0, 0, 0, 0.25);
+  stroke-width: 3px;
+}
+.cg-chamber-val {
+  fill: #fff;
+  font: 800 19px ui-monospace, Consolas, monospace;
+  paint-order: stroke;
+  stroke: rgba(0, 0, 0, 0.25);
+  stroke-width: 3px;
+}
+.cg-chamber-sub {
+  fill: #fff;
+  font: 600 12px system-ui, sans-serif;
+  paint-order: stroke;
+  stroke: rgba(0, 0, 0, 0.3);
+  stroke-width: 3px;
+}
+.cg-septum {
+  fill: #9f2d3a;
+}
+.cg-valve {
+  stroke: #f5f5f4;
+  stroke-width: 4;
+  stroke-dasharray: 40 18;
+  stroke-linecap: round;
+}
+.cg-vessel {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.cg-vessel-edge {
+  fill: none;
+  stroke: color-mix(in srgb, var(--text) 25%, transparent);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.cg-flow,
+.cg-shunt-flow {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.85);
+  stroke-dasharray: 4 14;
+  stroke-linecap: round;
+  animation: cg-flow 0.9s linear infinite;
+}
+.cg-shunt {
+  stroke-width: 9;
+  stroke-linecap: round;
+}
+.cg-shunt-flow {
+  stroke-width: 3;
+}
+.cg-arrowhead {
+  fill: #fff;
+  stroke: #111;
+  stroke-width: 0.6;
+}
+@keyframes cg-flow {
+  to {
+    stroke-dashoffset: -18;
+  }
+}
+.cg-defect-ring {
+  fill: none;
+  stroke: #facc15;
+  stroke-width: 3;
+  stroke-dasharray: 5 4;
+  animation: cg-pulse 1.4s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+@keyframes cg-pulse {
+  50% {
+    transform: scale(1.15);
+    opacity: 0.6;
+  }
+}
+.cg-tag {
+  fill: var(--text);
+  font: 700 12.5px system-ui, sans-serif;
+  paint-order: stroke;
+  stroke: var(--surface-2);
+  stroke-width: 4px;
+}
+.cg-summary {
+  font-weight: 700;
+  margin: 8px 0;
+}
+.cg-info .explanation {
+  margin-top: 0;
+}
+.cg-info .explanation p {
+  margin: 0 0 7px;
+}
+.cg-findings {
+  margin: 8px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.cg-findings div {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 6px 10px;
+}
+.cg-findings dt {
+  font-weight: 800;
+  font-size: 12px;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.cg-findings dd {
+  margin: 2px 0 0;
+  font-size: 13px;
+}
+.cg-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 6px 0;
+}
+@media (max-width: 1100px) {
+  .cg-body {
+    grid-template-columns: 1fr;
+  }
 }

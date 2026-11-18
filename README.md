@@ -39,6 +39,14 @@ Aplicación educativa para estudiantes de Medicina: muestra el **vector cardíac
   - Además, la mayoría incluye **grabaciones reales** de pacientes con su esquema fonocardiográfico, de la Heart Sound and Murmur Library de la Universidad de Michigan (CC BY‑SA 4.0; ver `public/audio/michigan/LICENCIA.txt`). No van incluidas en la versión de un solo archivo.
   - Fuente de las explicaciones: Manual MSD («Auscultación cardíaca»).
 
+### Cardiopatías congénitas
+
+- Esquema anatómico interactivo de las cuatro cavidades y los grandes vasos (`src/congenital/`):
+  - corazón normal, CIA, CIV, síndrome de Eisenmenger y ductus arterioso persistente;
+  - Tetralogía de Fallot, coartación de aorta y transposición de grandes arterias.
+- El color indica la saturación de O₂ (venosa, mezcla, arterial), el flujo está animado y los cortocircuitos llevan flechas con su dirección. Se marcan los defectos, las dilataciones y las hipertrofias, con la saturación y la presión de cada cavidad (valores orientativos).
+- Cada malformación incluye su fisiopatología, el Qp/Qs, la auscultación, el ECG, la radiografía y el tratamiento, con enlaces al ruido y al ECG relacionados. Fuente: Manual MSD, «Anomalías cardiovasculares congénitas».
+
 ## Instalarla como app (PWA)
 
 Abre https://antotpg.github.io/simulador-ecg/ y:

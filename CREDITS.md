@@ -19,5 +19,9 @@
 - **Grabaciones reales y esquemas** (incluidos en `public/audio/michigan/`): Judge R., Mangrulkar R. *Heart Sound and Murmur Library*. University of Michigan Medical School / Open.Michigan, 2015. Licencia **CC BY‑SA 4.0**: https://hdl.handle.net/2027.42/120554. Los MP3 están recortados a 30 s y recodificados a 64 kbps; los esquemas, sin cambios. Estos archivos se redistribuyen con la misma licencia (ver `public/audio/michigan/LICENCIA.txt`).
 - El botón «Escuchar» reproduce un sonido sintetizado a partir del modelo hemodinámico propio, sincronizado con la animación.
 
+## Cardiopatías congénitas
+- Contenido elaborado a partir del **Manual MSD** (versión para profesionales), Pediatría › «Anomalías cardiovasculares congénitas»: https://www.msdmanuals.com/es/professional/pediatr%C3%ADa/anomal%C3%ADas-cardiovasculares-cong%C3%A9nitas
+- Saturaciones y presiones: valores típicos de libro, orientativos. Esquemas de elaboración propia.
+
 ## Bibliotecas
 React, three.js, @react-three/fiber, @react-three/drei, Zustand, Zod, Vite y Vitest. Todas tienen licencia MIT.

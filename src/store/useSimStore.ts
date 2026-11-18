@@ -27,7 +27,7 @@ export type Layer =
 export type Theme = 'claro' | 'oscuro';
 export type EcgLayout = 'clasico' | 'simultaneo';
 export type CameraView = 'libre' | 'oblicua' | 'frontal' | 'horizontal' | 'lateral';
-export type MobileTab = '3d' | 'ecg' | 'ciclo' | 'patologia';
+export type MobileTab = '3d' | 'ecg' | 'ciclo' | 'congenitas' | 'patologia';
 
 interface SimState {
   heartRate: number;
