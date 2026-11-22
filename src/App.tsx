@@ -32,6 +32,54 @@ function useIsMobile(bp = 900) {
   return m;
 }
 
+const NUEVA_WEB = 'https://simulador-ecg.pages.dev';
+
+/**
+ * Aviso de la mudanza a Cloudflare Pages. En la web antigua invita a guardar
+ * la dirección nueva; en la nueva, a guardarla en favoritos. Se puede cerrar.
+ */
+function MigrationNotice() {
+  const key = 'aviso-cloudflare-cerrado';
+  const [closed, setClosed] = useState(() => {
+    try {
+      return localStorage.getItem(key) === '1';
+    } catch {
+      return false;
+    }
+  });
+  if (closed) return null;
+  const enNueva = typeof location !== 'undefined' && location.hostname.endsWith('pages.dev');
+  const cerrar = () => {
+    setClosed(true);
+    try {
+      localStorage.setItem(key, '1');
+    } catch {
+      /* sin almacenamiento: solo se cierra en esta visita */
+    }
+  };
+  return (
+    <div className="migration-notice" role="status">
+      <span aria-hidden>📢</span>
+      {enNueva ? (
+        <span>
+          Dentro de unos días esta será la <b>dirección definitiva</b> de la web: <b>simulador-ecg.pages.dev</b>. Guárdala en favoritos.
+        </span>
+      ) : (
+        <span>
+          Dentro de unos días la web se trasladará definitivamente a{' '}
+          <a href={NUEVA_WEB} target="_blank" rel="noopener noreferrer">
+            simulador-ecg.pages.dev
+          </a>
+          . Guarda la nueva dirección (ya funciona).
+        </span>
+      )}
+      <button className="migration-close" onClick={cerrar} aria-label="Cerrar aviso">
+        ✕
+      </button>
+    </div>
+  );
+}
+
 function Footer() {
   return (
     <footer className="app-footer">
@@ -204,6 +252,7 @@ export default function App() {
       <div className="app mobile">
         <AudioSync />
         <Header fc={!FUERA_DEL_SIMULADOR.includes(tab)} />
+        <MigrationNotice />
         <main className="mobile-main">
           {tab === '3d' && (
             <div className="stack">
@@ -268,6 +317,7 @@ export default function App() {
     <div className="app desktop">
       <AudioSync />
       <Header fc={seccion === 'simulador'} />
+      <MigrationNotice />
       <SectionNav />
       {/* El contenido tiene su propio scroll; la barra de controles queda fija debajo y no tapa nada.
           La key hace que al cambiar de pestaña se vuelva arriba del todo. */}

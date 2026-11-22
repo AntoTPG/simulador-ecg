@@ -58,6 +58,11 @@ Aplicación educativa para estudiantes de Medicina: muestra el **vector cardíac
 - **Curvas presión‑volumen** del pulmón, la pared torácica y el sistema respiratorio, con CRF, VR y CPT.
 - **Acino en 3D** (bronquiolo terminal, bronquiolos respiratorios y sacos alveolares) que respira sincronizado y muestra dónde está el problema en cada patología.
 - Patologías: asma (crisis), EPOC/enfisema, fibrosis pulmonar, obesidad y enfermedad neuromuscular.
+- **Espirometría forzada** (`src/respiratory/spirometry.ts`), con la misma envolvente de flujo que el modelo:
+  - curvas volumen‑tiempo y flujo‑volumen animadas como en el espirómetro;
+  - FVC, FEV1, FEV1/FVC, PEF, FEF25–75 y PIF con el % del teórico, y prueba broncodilatadora;
+  - interpretación paso a paso (SEPAR, ATS/ERS, GOLD), con la forma de la curva y el índice de Empey;
+  - casos: normal, asma, EPOC, fibrosis, enfermedad neuromuscular, mixto y obstrucción de la vía aérea central (fija, variable extratorácica e intratorácica).
 
 ### Cardiopatías congénitas
 

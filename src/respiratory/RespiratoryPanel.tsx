@@ -11,6 +11,7 @@ import { lungCompliance, RESP_NORMAL, simulateBreathing } from './mechanics';
 import { respClock, startRespLoop, useRespPlay } from './respClock';
 import { RespCycleChart } from './RespCycleChart';
 import { RespPvChart } from './RespPvChart';
+import { SpirometryPanel } from './SpirometryPanel';
 
 export function RespiratoryPanel() {
   const [id, setId] = useState('normal');
@@ -43,6 +44,14 @@ export function RespiratoryPanel() {
   for (let i = 0; i < cycle.n; i++) pplMin = Math.min(pplMin, cycle.ppl[i]);
 
   return (
+    <>
+    <div className="resp-warning" role="note">
+      <span aria-hidden>⚠️</span>
+      <span>
+        <b>Sección en revisión.</b> La parte de respiratorio es nueva y el autor todavía no la ha revisado a fondo: puede contener imprecisiones. Contrástala con tus
+        apuntes y libros.
+      </span>
+    </div>
     <section className="card resp-card" aria-labelledby="resp-title">
       <div className="cg-head">
         <h2 id="resp-title">Respiratorio · mecánica y ciclo respiratorio</h2>
@@ -147,5 +156,7 @@ export function RespiratoryPanel() {
         </div>
       </div>
     </section>
+    <SpirometryPanel />
+    </>
   );
 }

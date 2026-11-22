@@ -2224,3 +2224,128 @@ input[type='range'] {
 .mobile .resp-3d {
   height: 340px;
 }
+
+/* ===== Espirometría ===== */
+.spiro-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.spiro-canvas {
+  width: 100%;
+}
+.spiro-canvas canvas {
+  display: block;
+}
+.spiro-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.spiro-table th {
+  text-align: left;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--muted);
+  padding: 4px 6px;
+  border-bottom: 1px solid var(--border);
+}
+.spiro-table td {
+  padding: 5px 6px;
+  border-bottom: 1px solid var(--border);
+  font-variant-numeric: tabular-nums;
+}
+.spiro-interp {
+  border-radius: 12px;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-left: 5px solid #16a34a;
+  background: var(--surface-2);
+}
+.spiro-interp.obstructivo,
+.spiro-interp.central {
+  border-left-color: #dc2626;
+}
+.spiro-interp.restrictivo,
+.spiro-interp.mixto {
+  border-left-color: #d97706;
+}
+.spiro-interp h3 {
+  margin: 0 0 6px;
+  font-size: 15px;
+}
+.spiro-interp ol {
+  margin: 0 0 6px;
+  padding-left: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 13px;
+}
+.spiro-interp p {
+  margin: 4px 0 0;
+}
+.spiro-ico {
+  display: inline-block;
+  width: 18px;
+  font-weight: 800;
+}
+.spiro-bd.pos b {
+  color: #16a34a;
+}
+@media (max-width: 1100px) {
+  .spiro-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.mobile .spiro-table {
+  font-size: 12px;
+}
+
+/* ===== Avisos ===== */
+.migration-notice {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  padding: 7px 12px;
+  border-radius: 12px;
+  background: color-mix(in srgb, #2563eb 10%, var(--surface));
+  border: 1px solid color-mix(in srgb, #2563eb 35%, transparent);
+}
+.migration-notice a {
+  font-weight: 700;
+  color: #2563eb;
+}
+.migration-close {
+  margin-left: auto;
+  flex: none;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font-size: 14px;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+.migration-close:hover {
+  color: var(--text);
+}
+.resp-warning {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 13.5px;
+  background: var(--warn-bg);
+  color: var(--warn-text);
+  border: 1px solid color-mix(in srgb, #f59e0b 45%, transparent);
+}
+.mobile .migration-notice {
+  font-size: 12px;
+  padding: 6px 10px;
+}
