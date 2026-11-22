@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { EcgPanel } from './ecg/EcgPanel';
 import { HeartScene } from './heart3d/HeartScene';
 import { startClockLoop } from './store/clock';
-import { useSim, type MobileTab } from './store/useSimStore';
+import { useSim, type MobileTab, type Seccion } from './store/useSimStore';
 import { Controls } from './ui/Controls';
 import { EcgHeader } from './ui/EcgHeader';
 import { LayersButton, ViewButtons } from './ui/LayerToggles';
@@ -121,19 +121,53 @@ function AudioSync() {
   const speed = useSim((s) => s.speed);
   const sim = useSim((s) => s.sim);
   const soundId = useSim((s) => s.soundId);
+  // Fuera del simulador (congénitas, histología) el sonido se calla
+  const enSimulador = useSim((s) => s.mobileTab !== 'congenitas' && s.mobileTab !== 'histologia');
+  const seccion = useSim((s) => s.seccion);
+  const mobile = useIsMobile();
+  const activo = mobile ? enSimulador : seccion === 'simulador';
   useEffect(() => {
-    if (audioOn && playing && speed === 1) playLoop(getCycleData(sim, soundId).audio, sim.duration, clock.t);
+    if (activo && audioOn && playing && speed === 1) playLoop(getCycleData(sim, soundId).audio, sim.duration, clock.t);
     else stopAudio();
     return () => stopAudio();
-  }, [audioOn, playing, speed, sim, soundId]);
+  }, [activo, audioOn, playing, speed, sim, soundId]);
   return null;
+}
+
+const SECCIONES: { k: Seccion; label: string; icon: string }[] = [
+  { k: 'simulador', label: 'Simulador ECG', icon: '∿' },
+  { k: 'congenitas', label: 'Cardiopatías congénitas', icon: '⧉' },
+  { k: 'histologia', label: 'Histología y patología', icon: '◎' },
+];
+
+/** Pestañas principales del escritorio, para que la página no sea interminable. */
+function SectionNav() {
+  const seccion = useSim((s) => s.seccion);
+  const setSeccion = useSim((s) => s.setSeccion);
+  return (
+    <nav className="section-nav" role="tablist" aria-label="Secciones">
+      {SECCIONES.map((x) => (
+        <button
+          key={x.k}
+          role="tab"
+          aria-selected={seccion === x.k}
+          className={`section-tab${seccion === x.k ? ' is-on' : ''}`}
+          onClick={() => setSeccion(x.k)}
+        >
+          <span aria-hidden>{x.icon}</span>
+          {x.label}
+        </button>
+      ))}
+    </nav>
+  );
 }
 
 const TABS: { k: MobileTab; label: string; icon: string }[] = [
   { k: '3d', label: 'Corazón', icon: '♥' },
   { k: 'ecg', label: 'ECG', icon: '∿' },
-  { k: 'ciclo', label: 'Ciclo y ruidos', icon: '🩺' },
-  { k: 'congenitas', label: 'Anatomía', icon: '⧉' },
+  { k: 'ciclo', label: 'Ciclo', icon: '🩺' },
+  { k: 'congenitas', label: 'Congénitas', icon: '⧉' },
+  { k: 'histologia', label: 'Histología', icon: '◎' },
   { k: 'patologia', label: 'Patología', icon: '☰' },
 ];
 
@@ -179,6 +213,10 @@ export default function App() {
           {tab === 'congenitas' && (
             <div className="stack">
               <CongenitalPanel />
+            </div>
+          )}
+          {tab === 'histologia' && (
+            <div className="stack">
               <VesselPanel />
             </div>
           )}
@@ -189,7 +227,7 @@ export default function App() {
             </div>
           )}
         </main>
-        <Controls />
+        {tab !== 'congenitas' && tab !== 'histologia' && <Controls />}
         <nav className="tabs" role="tablist">
           {TABS.map((t) => (
             <button key={t.k} role="tab" aria-selected={tab === t.k} className={`tab${tab === t.k ? ' is-on' : ''}`} onClick={() => setTab(t.k)}>
@@ -202,32 +240,39 @@ export default function App() {
     );
   }
 
+  const seccion = useSim((s) => s.seccion);
   return (
     <div className="app desktop">
       <AudioSync />
       <Header />
-      {/* El contenido tiene su propio scroll; la barra de controles queda fija debajo y no tapa nada */}
-      <div className="scroll-area">
-        <main className="desktop-main">
-          <div className="left-col">
-            <ScenePanel />
-            <VectorSection />
-          </div>
-          <div className="right-col">
-            <EcgSection />
-            <PathologyPanel />
-          </div>
-        </main>
-        {/* Ciclo cardíaco y ruidos, sincronizados con todo lo anterior */}
-        <section className="cycle-row" aria-label="Ciclo cardíaco y ruidos cardíacos">
-          <WiggersPanel />
-          <HeartSoundsPanel />
-        </section>
-        <CongenitalPanel />
-        <VesselPanel />
+      <SectionNav />
+      {/* El contenido tiene su propio scroll; la barra de controles queda fija debajo y no tapa nada.
+          La key hace que al cambiar de pestaña se vuelva arriba del todo. */}
+      <div className="scroll-area" key={seccion}>
+        {seccion === 'simulador' && (
+          <>
+            <main className="desktop-main">
+              <div className="left-col">
+                <ScenePanel />
+                <VectorSection />
+              </div>
+              <div className="right-col">
+                <EcgSection />
+                <PathologyPanel />
+              </div>
+            </main>
+            {/* Ciclo cardíaco y ruidos, sincronizados con todo lo anterior */}
+            <section className="cycle-row" aria-label="Ciclo cardíaco y ruidos cardíacos">
+              <WiggersPanel />
+              <HeartSoundsPanel />
+            </section>
+          </>
+        )}
+        {seccion === 'congenitas' && <CongenitalPanel />}
+        {seccion === 'histologia' && <VesselPanel />}
         <Footer />
       </div>
-      <Controls />
+      {seccion === 'simulador' && <Controls />}
     </div>
   );
 }

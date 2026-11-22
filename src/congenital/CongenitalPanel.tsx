@@ -17,6 +17,13 @@ export function CongenitalPanel() {
   const [showValues, setShowValues] = useState(true);
   const setSound = useSim((s) => s.setSound);
   const setPathology = useSim((s) => s.setPathology);
+  const setSeccion = useSim((s) => s.setSeccion);
+  const setMobileTab = useSim((s) => s.setMobileTab);
+  // Los enlaces llevan al simulador (escritorio) o a la pestaña correspondiente (móvil)
+  const irA = (tab: 'ciclo' | 'ecg') => {
+    setSeccion('simulador');
+    setMobileTab(tab);
+  };
   const c = getCongenita(id);
 
   return (
@@ -78,12 +85,12 @@ export function CongenitalPanel() {
           </dl>
           <div className="cg-links">
             {c.sonido && (
-              <button className="btn btn-small" onClick={() => setSound(c.sonido!)} title="Lo selecciona en la sección «Ruidos cardíacos»">
+              <button className="btn btn-small" onClick={() => { setSound(c.sonido!); irA('ciclo'); }} title="Lo abre en la sección «Ruidos cardíacos»">
                 🩺 Elegir el ruido: {getSound(c.sonido).nombre}
               </button>
             )}
             {c.ecg && (
-              <button className="btn btn-small" onClick={() => setPathology(c.ecg!)}>
+              <button className="btn btn-small" onClick={() => { setPathology(c.ecg!); irA('ecg'); }}>
                 ∿ Ver el ECG: {getPathology(c.ecg).nombre}
               </button>
             )}

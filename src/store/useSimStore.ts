@@ -27,7 +27,9 @@ export type Layer =
 export type Theme = 'claro' | 'oscuro';
 export type EcgLayout = 'clasico' | 'simultaneo';
 export type CameraView = 'libre' | 'oblicua' | 'frontal' | 'horizontal' | 'lateral';
-export type MobileTab = '3d' | 'ecg' | 'ciclo' | 'congenitas' | 'patologia';
+export type MobileTab = '3d' | 'ecg' | 'ciclo' | 'congenitas' | 'histologia' | 'patologia';
+/** Pestañas principales en escritorio: el simulador y las secciones de anatomía. */
+export type Seccion = 'simulador' | 'congenitas' | 'histologia';
 
 interface SimState {
   heartRate: number;
@@ -54,6 +56,8 @@ interface SimState {
   theme: Theme;
   ecgLayout: EcgLayout;
   mobileTab: MobileTab;
+  seccion: Seccion;
+  setSeccion: (s: Seccion) => void;
   /** Ruido cardíaco elegido (catálogo de src/sounds) y si se está escuchando. */
   soundId: string;
   audioOn: boolean;
@@ -149,6 +153,8 @@ export const useSim = create<SimState>()((set, get) => ({
   theme: initialTheme,
   ecgLayout: 'clasico',
   mobileTab: '3d',
+  seccion: 'simulador',
+  setSeccion: (seccion) => set({ seccion }),
 
   setHeartRate: (heartRate) => set(rebuild(get, { heartRate })),
   setQrsAxis: (qrsAxis) => set(rebuild(get, { qrsAxis })),
