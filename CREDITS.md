@@ -23,5 +23,10 @@
 - Contenido elaborado a partir del **Manual MSD** (versión para profesionales), Pediatría › «Anomalías cardiovasculares congénitas»: https://www.msdmanuals.com/es/professional/pediatr%C3%ADa/anomal%C3%ADas-cardiovasculares-cong%C3%A9nitas
 - Saturaciones y presiones: valores típicos de libro, orientativos. Esquemas de elaboración propia.
 
+## Pared arterial
+- Histología normal: Ross MH, Pawlina W. *Histología* (sistema cardiovascular).
+- Patología: Manual MSD (versión para profesionales), «Arteriosclerosis no ateromatosa», «Generalidades sobre los aneurismas aórticos», «Aneurismas de la aorta torácica» y capítulos de aterosclerosis, disección aórtica, vasculitis y sífilis.
+- Esquemas de elaboración propia, simplificados y no a escala.
+
 ## Bibliotecas
 React, three.js, @react-three/fiber, @react-three/drei, Zustand, Zod, Vite y Vitest. Todas tienen licencia MIT.

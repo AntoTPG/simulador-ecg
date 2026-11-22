@@ -47,6 +47,15 @@ Aplicación educativa para estudiantes de Medicina: muestra el **vector cardíac
 - El color indica la saturación de O₂ (venosa, mezcla, arterial), el flujo está animado y los cortocircuitos llevan flechas con su dirección. Se marcan los defectos, las dilataciones y las hipertrofias, con la saturación y la presión de cada cavidad (valores orientativos).
 - Cada malformación incluye su fisiopatología, el Qp/Qs, la auscultación, el ECG, la radiografía y el tratamiento, con enlaces al ruido y al ECG relacionados. Fuente: Manual MSD, «Anomalías cardiovasculares congénitas».
 
+### Pared arterial (corte transversal)
+
+- Corte transversal estilizado (tipo hematoxilina‑eosina) de una arteria muscular, de la aorta y de una arteriola (`src/vessels/`), normal y patológico lado a lado, con rótulos y el efecto en cada capa (íntima, media, adventicia).
+- Patologías:
+  - aterosclerosis por fases (estría grasa → fibroateroma → calcificada → complicada con trombo);
+  - arteriolosclerosis hialina e hiperplásica, esclerosis de Mönckeberg, hipertrofia de la media por HTA;
+  - aneurisma y disección aórtica;
+  - arteritis de células gigantes, poliarteritis nudosa y aortitis sifilítica.
+
 ## Instalarla como app (PWA)
 
 Abre https://antotpg.github.io/simulador-ecg/ y:

@@ -12,6 +12,7 @@ import { VectorPlanes } from './ui/VectorPlanes';
 import { WiggersPanel } from './ui/WiggersPanel';
 import { HeartSoundsPanel } from './ui/HeartSoundsPanel';
 import { CongenitalPanel } from './congenital/CongenitalPanel';
+import { VesselPanel } from './vessels/VesselPanel';
 import { audioPositionMs, playLoop, stopAudio } from './sounds/player';
 import { getCycleData } from './sounds/cycleData';
 import { clock } from './store/clock';
@@ -132,7 +133,7 @@ const TABS: { k: MobileTab; label: string; icon: string }[] = [
   { k: '3d', label: 'Corazón', icon: '♥' },
   { k: 'ecg', label: 'ECG', icon: '∿' },
   { k: 'ciclo', label: 'Ciclo y ruidos', icon: '🩺' },
-  { k: 'congenitas', label: 'Congénitas', icon: '⧉' },
+  { k: 'congenitas', label: 'Anatomía', icon: '⧉' },
   { k: 'patologia', label: 'Patología', icon: '☰' },
 ];
 
@@ -178,6 +179,7 @@ export default function App() {
           {tab === 'congenitas' && (
             <div className="stack">
               <CongenitalPanel />
+              <VesselPanel />
             </div>
           )}
           {tab === 'patologia' && (
@@ -222,6 +224,7 @@ export default function App() {
           <HeartSoundsPanel />
         </section>
         <CongenitalPanel />
+        <VesselPanel />
         <Footer />
       </div>
       <Controls />

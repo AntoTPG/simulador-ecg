@@ -7,7 +7,7 @@ Instrucciones para Claude (y para cualquier persona) que trabaje en este proyect
 - Aplicación web **educativa** para estudiantes de Medicina. Incluye:
   - vector cardíaco en 3D y ECG de 12 derivaciones sincronizado;
   - patologías, diagrama de Wiggers y ruidos cardíacos;
-  - cardiopatías congénitas.
+  - cardiopatías congénitas y pared arterial en corte transversal.
 - Autor y responsable: **Antonio Requena Quesada**, estudiante de Medicina. Lo usan sus compañeros de facultad.
 - Web publicada: https://antotpg.github.io/simulador-ecg/ (repositorio público `AntoTPG/simulador-ecg`).
 
@@ -61,6 +61,7 @@ Para que `git push` pueda abrir la ventana de inicio de sesión de GitHub: `$env
 - `src/pathologies/`: **una patología = un archivo de datos** validado con Zod (`schema.ts`). Se registra solo y aparece en el desplegable. Los archivos que empiezan por `_` son datos compartidos.
 - `src/sounds/`: catálogo de ruidos cardíacos (`catalog.ts`), síntesis de audio (`acoustics.ts`) y reproducción sincronizada (`player.ts`).
 - `src/congenital/`: cardiopatías congénitas (catálogo de datos + esquema SVG).
+- `src/vessels/`: pared arterial en corte transversal (catálogo de datos + dibujo SVG por capas).
 - `src/heart3d/`: escena 3D (react-three-fiber). Corazón procedural con mapa de activación; el contrato para cambiarlo por un glTF está en `models/HeartModel.ts`.
 - `src/ecg/`: ECG en Canvas 2D (formatos 3×4 clásico y simultáneo).
 - `src/ui/`: paneles e interfaz. Estado global con Zustand (`src/store/`). El reloj de la animación vive fuera de React (`clock.ts`).

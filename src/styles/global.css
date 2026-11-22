@@ -1736,3 +1736,105 @@ input[type='range'] {
   opacity: 0.85;
   margin-top: 2px;
 }
+
+/* ===== Pared arterial ===== */
+.vs-toggles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+.vs-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.vs-figs {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-top: 10px;
+  animation: fade 0.35s ease both;
+}
+.vs-figs.two {
+  grid-template-columns: 1fr 1fr;
+}
+.vs-fig {
+  margin: 0;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 6px;
+}
+.vs-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.vs-title {
+  fill: var(--text);
+  font: 800 15px system-ui, sans-serif;
+}
+.vs-leader {
+  fill: none;
+  stroke: var(--muted);
+  stroke-width: 1;
+  opacity: 0.8;
+}
+.vs-leader.path {
+  stroke: var(--accent);
+  opacity: 1;
+}
+.vs-dot {
+  fill: var(--text);
+  stroke: #fff;
+  stroke-width: 1;
+}
+.vs-dot.path {
+  fill: var(--accent);
+}
+.vs-label {
+  fill: var(--text);
+  font: 600 12.5px system-ui, sans-serif;
+}
+.vs-label.path {
+  fill: var(--accent);
+  font-weight: 800;
+}
+.vs-note {
+  margin: 6px 0 0;
+}
+.vs-layers {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 10px 0;
+}
+.vs-layer {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 8px 10px;
+  font-size: 13px;
+}
+.vs-layer.afectada {
+  border-color: color-mix(in srgb, var(--neg) 55%, transparent);
+  box-shadow: inset 3px 0 0 var(--neg);
+}
+.vs-layer p {
+  margin: 4px 0 0;
+}
+.vs-layer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+@media (max-width: 1100px) {
+  .vs-figs.two {
+    grid-template-columns: 1fr;
+  }
+  .vs-layers {
+    grid-template-columns: 1fr;
+  }
+}
