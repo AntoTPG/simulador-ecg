@@ -27,9 +27,9 @@ export type Layer =
 export type Theme = 'claro' | 'oscuro';
 export type EcgLayout = 'clasico' | 'simultaneo';
 export type CameraView = 'libre' | 'oblicua' | 'frontal' | 'horizontal' | 'lateral';
-export type MobileTab = '3d' | 'ecg' | 'ciclo' | 'congenitas' | 'histologia' | 'patologia';
+export type MobileTab = '3d' | 'ecg' | 'ciclo' | 'congenitas' | 'histologia' | 'patologia' | 'quiz' | 'respiratorio';
 /** Pestañas principales en escritorio: el simulador y las secciones de anatomía. */
-export type Seccion = 'simulador' | 'congenitas' | 'histologia';
+export type Seccion = 'simulador' | 'quiz' | 'respiratorio' | 'congenitas' | 'histologia';
 
 interface SimState {
   heartRate: number;

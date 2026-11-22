@@ -33,11 +33,31 @@ Aplicación educativa para estudiantes de Medicina: muestra el **vector cardíac
   - fases del ciclo y cierres y aperturas valvulares;
   - VTD, VTS y FE, con el cursor sincronizado con el ECG y el 3D.
 - **Modelo hemodinámico** (`src/engine/hemodynamics.ts`), calculado latido a latido a partir del ECG. Incluye el acoplamiento electromecánico, Frank‑Starling, el modelo Windkessel y la patada auricular. Por eso las arritmias se reflejan solas: en la FA cada latido es distinto y no hay onda *a* ni R4, y en el BAV completo aparecen ondas *a* en cañón.
+- **Bucle presión‑volumen del VI** (`src/engine/pvLoop.ts`), sincronizado con el Wiggers:
+  - modelo de elastancias (Suga y Sagawa), con deslizadores de precarga, poscarga (Ea), contractilidad (Ees) y rigidez diastólica;
+  - RPVTS, RPVTD y recta de Ea dibujadas, con el bucle normal de referencia;
+  - casos típicos: insuficiencia cardíaca con FE reducida y conservada, estenosis e insuficiencia aórtica y mitral;
+  - VTD, VTS, VS, FE, presión telediastólica y trabajo sistólico.
 - **22 ruidos** fisiológicos y patológicos (`src/sounds/catalog.ts`): R1/R2, desdoblamientos, R3, R4, galopes, clics, chasquido de apertura, soplos sistólicos, diastólicos y continuos, roce y knock pericárdicos.
   - Cada uno trae una explicación breve, su foco de auscultación y si se oye mejor con la campana o con la membrana.
   - «Escuchar» reproduce un sonido **sintetizado** y sincronizado con la animación.
   - Además, la mayoría incluye **grabaciones reales** de pacientes con su esquema fonocardiográfico, de la Heart Sound and Murmur Library de la Universidad de Michigan (CC BY‑SA 4.0; ver `public/audio/michigan/LICENCIA.txt`). No van incluidas en la versión de un solo archivo.
   - Fuente de las explicaciones: Manual MSD («Auscultación cardíaca»).
+
+### Adivina el ECG
+
+- Pestaña de autoevaluación (`src/quiz/`): sale un ECG de 12 derivaciones al azar y hay que elegir el diagnóstico entre 4 opciones.
+- 33 diagnósticos generados con el propio simulador, con la frecuencia algo variada en cada pregunta. Se puede filtrar por tema (isquemia, electrolitos, conducción, arritmias, otras).
+- Pista opcional, marcador de aciertos y racha. Al responder se marcan las derivaciones clave, se explica la fisiopatología y se puede superponer el ECG normal o abrirlo en el simulador.
+- Para añadir una pregunta basta con añadir una línea en `src/quiz/bank.ts`.
+
+### Respiratorio (mecánica y ciclo respiratorio)
+
+- Modelo de mecánica pulmonar de un compartimento (`src/respiratory/mechanics.ts`): curva presión‑volumen del pulmón, pared torácica, resistencia de la vía aérea y limitación al flujo espiratorio. La CRF no se fija: sale del equilibrio entre pulmón y pared.
+- **Ciclo respiratorio**: volumen, flujo, presión alveolar y presión pleural, con los valores de West en el adulto sano (Ppl −5 → −8 cmH₂O; Palv ≈ ±1 cmH₂O).
+- **Curvas presión‑volumen** del pulmón, la pared torácica y el sistema respiratorio, con CRF, VR y CPT.
+- **Acino en 3D** (bronquiolo terminal, bronquiolos respiratorios y sacos alveolares) que respira sincronizado y muestra dónde está el problema en cada patología.
+- Patologías: asma (crisis), EPOC/enfisema, fibrosis pulmonar, obesidad y enfermedad neuromuscular.
 
 ### Cardiopatías congénitas
 

@@ -14,6 +14,17 @@
 - Dower GE et al. On deriving the electrocardiogram from vectorcardiographic leads. Clin Cardiol, 1980. (Matriz inversa de Dower.)
 - Frank E. An accurate, clinically practical system for spatial vectorcardiography. Circulation, 1956.
 
+## Bucle presión‑volumen
+- Suga H, Sagawa K, Shoukas AA. Load independence of the instantaneous pressure‑volume ratio of the canine left ventricle and effects of epinephrine and heart rate on the ratio. Circ Res, 1973. (Elastancia telesistólica.)
+- Sunagawa K, Maughan WL, Burkhoff D, Sagawa K. Left ventricular interaction with arterial load studied in isolated canine ventricle. Am J Physiol, 1983. (Elastancia arterial efectiva, Ea.)
+- Valores de referencia orientativos; textos y modelo de elaboración propia, simplificados.
+
+## Respiratorio
+- West JB, Luks AM. *Fisiología respiratoria. Fundamentos* (mecánica, presiones y volúmenes de referencia).
+- West JB. *Fisiopatología pulmonar* (enfermedades obstructivas y restrictivas).
+- Manual MSD (versión para profesionales): «Asma», «Enfermedad pulmonar obstructiva crónica», «Fibrosis pulmonar idiopática», «Síndrome de obesidad‑hipoventilación» y «Generalidades sobre las pruebas de función pulmonar».
+- Modelo y acino 3D de elaboración propia, simplificados y no a escala; valores orientativos.
+
 ## Ruidos cardíacos
 - Explicaciones elaboradas a partir del **Manual MSD** (versión para profesionales), «Auscultación cardíaca» (Gupta J. I., Shea M. J., rev. abr. 2025): https://www.msdmanuals.com/es/professional/trastornos-cardiovasculares/abordaje-del-paciente-card%C3%ADaco/auscultaci%C3%B3n-card%C3%ADaca
 - **Grabaciones reales y esquemas** (incluidos en `public/audio/michigan/`): Judge R., Mangrulkar R. *Heart Sound and Murmur Library*. University of Michigan Medical School / Open.Michigan, 2015. Licencia **CC BY‑SA 4.0**: https://hdl.handle.net/2027.42/120554. Los MP3 están recortados a 30 s y recodificados a 64 kbps; los esquemas, sin cambios. Estos archivos se redistribuyen con la misma licencia (ver `public/audio/michigan/LICENCIA.txt`).

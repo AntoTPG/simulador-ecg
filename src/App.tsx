@@ -10,9 +10,12 @@ import { HeartRateBadge, LeadInfoPanel, PhaseStepper } from './ui/LiveInfo';
 import { PathologyPanel } from './ui/PathologyPanel';
 import { VectorPlanes } from './ui/VectorPlanes';
 import { WiggersPanel } from './ui/WiggersPanel';
+import { PvLoopPanel } from './ui/PvLoopPanel';
 import { HeartSoundsPanel } from './ui/HeartSoundsPanel';
 import { CongenitalPanel } from './congenital/CongenitalPanel';
 import { VesselPanel } from './vessels/VesselPanel';
+import { QuizPanel } from './quiz/QuizPanel';
+import { RespiratoryPanel } from './respiratory/RespiratoryPanel';
 import { audioPositionMs, playLoop, stopAudio } from './sounds/player';
 import { getCycleData } from './sounds/cycleData';
 import { clock } from './store/clock';
@@ -41,7 +44,8 @@ function Footer() {
   );
 }
 
-function Header() {
+/** `fc`: mostrar la FC del simulador (fuera de él confundiría, p. ej. en «Adivina el ECG»). */
+function Header({ fc = true }: { fc?: boolean }) {
   const theme = useSim((s) => s.theme);
   const toggleTheme = useSim((s) => s.toggleTheme);
   return (
@@ -61,7 +65,7 @@ function Header() {
         ⚠️ Herramienta <b>educativa y simplificada</b>. No apta para uso clínico ni para diagnóstico.
       </p>
       <div className="header-right">
-        <HeartRateBadge />
+        {fc && <HeartRateBadge />}
         <button className="icon-btn" onClick={toggleTheme} aria-label="Cambiar tema" title="Cambiar tema">
           {theme === 'claro' ? '☾' : '☀'}
         </button>
@@ -114,6 +118,9 @@ function VectorSection() {
   );
 }
 
+/** Pestañas del móvil que no usan la animación (sin sonido ni barra de reproducción). */
+const FUERA_DEL_SIMULADOR: MobileTab[] = ['quiz', 'respiratorio', 'congenitas', 'histologia'];
+
 /** Arranca, para o resincroniza el sonido según el estado (no dibuja nada). */
 function AudioSync() {
   const audioOn = useSim((s) => s.audioOn);
@@ -122,7 +129,7 @@ function AudioSync() {
   const sim = useSim((s) => s.sim);
   const soundId = useSim((s) => s.soundId);
   // Fuera del simulador (congénitas, histología) el sonido se calla
-  const enSimulador = useSim((s) => s.mobileTab !== 'congenitas' && s.mobileTab !== 'histologia');
+  const enSimulador = useSim((s) => !FUERA_DEL_SIMULADOR.includes(s.mobileTab));
   const seccion = useSim((s) => s.seccion);
   const mobile = useIsMobile();
   const activo = mobile ? enSimulador : seccion === 'simulador';
@@ -136,6 +143,8 @@ function AudioSync() {
 
 const SECCIONES: { k: Seccion; label: string; icon: string }[] = [
   { k: 'simulador', label: 'Simulador ECG', icon: '∿' },
+  { k: 'quiz', label: 'Adivina el ECG', icon: '?' },
+  { k: 'respiratorio', label: 'Respiratorio', icon: '🫁' },
   { k: 'congenitas', label: 'Cardiopatías congénitas', icon: '⧉' },
   { k: 'histologia', label: 'Histología y patología', icon: '◎' },
 ];
@@ -166,15 +175,19 @@ const TABS: { k: MobileTab; label: string; icon: string }[] = [
   { k: '3d', label: 'Corazón', icon: '♥' },
   { k: 'ecg', label: 'ECG', icon: '∿' },
   { k: 'ciclo', label: 'Ciclo', icon: '🩺' },
+  { k: 'patologia', label: 'Patología', icon: '☰' },
+  { k: 'quiz', label: 'Adivina', icon: '?' },
+  { k: 'respiratorio', label: 'Resp.', icon: '🫁' },
   { k: 'congenitas', label: 'Congénitas', icon: '⧉' },
   { k: 'histologia', label: 'Histología', icon: '◎' },
-  { k: 'patologia', label: 'Patología', icon: '☰' },
 ];
 
 export default function App() {
   const mobile = useIsMobile();
   const tab = useSim((s) => s.mobileTab);
   const setTab = useSim((s) => s.setMobileTab);
+  // Los hooks van antes del `return` del móvil: si no, al cruzar los 900 px React fallaría
+  const seccion = useSim((s) => s.seccion);
 
   useEffect(
     () =>
@@ -190,7 +203,7 @@ export default function App() {
     return (
       <div className="app mobile">
         <AudioSync />
-        <Header />
+        <Header fc={!FUERA_DEL_SIMULADOR.includes(tab)} />
         <main className="mobile-main">
           {tab === '3d' && (
             <div className="stack">
@@ -207,12 +220,23 @@ export default function App() {
           {tab === 'ciclo' && (
             <div className="stack">
               <WiggersPanel />
+              <PvLoopPanel />
               <HeartSoundsPanel />
             </div>
           )}
           {tab === 'congenitas' && (
             <div className="stack">
               <CongenitalPanel />
+            </div>
+          )}
+          {tab === 'quiz' && (
+            <div className="stack">
+              <QuizPanel />
+            </div>
+          )}
+          {tab === 'respiratorio' && (
+            <div className="stack">
+              <RespiratoryPanel />
             </div>
           )}
           {tab === 'histologia' && (
@@ -227,7 +251,7 @@ export default function App() {
             </div>
           )}
         </main>
-        {tab !== 'congenitas' && tab !== 'histologia' && <Controls />}
+        {!FUERA_DEL_SIMULADOR.includes(tab) && <Controls />}
         <nav className="tabs" role="tablist">
           {TABS.map((t) => (
             <button key={t.k} role="tab" aria-selected={tab === t.k} className={`tab${tab === t.k ? ' is-on' : ''}`} onClick={() => setTab(t.k)}>
@@ -240,11 +264,10 @@ export default function App() {
     );
   }
 
-  const seccion = useSim((s) => s.seccion);
   return (
     <div className="app desktop">
       <AudioSync />
-      <Header />
+      <Header fc={seccion === 'simulador'} />
       <SectionNav />
       {/* El contenido tiene su propio scroll; la barra de controles queda fija debajo y no tapa nada.
           La key hace que al cambiar de pestaña se vuelva arriba del todo. */}
@@ -266,8 +289,12 @@ export default function App() {
               <WiggersPanel />
               <HeartSoundsPanel />
             </section>
+            {/* Bucle presión-volumen, con el mismo reloj que el Wiggers */}
+            <PvLoopPanel />
           </>
         )}
+        {seccion === 'quiz' && <QuizPanel />}
+        {seccion === 'respiratorio' && <RespiratoryPanel />}
         {seccion === 'congenitas' && <CongenitalPanel />}
         {seccion === 'histologia' && <VesselPanel />}
         <Footer />

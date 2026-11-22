@@ -105,7 +105,7 @@ export function HeartSoundsPanel() {
           <p key={i}>{t}</p>
         ))}
       </div>
-      {def.grabaciones && def.grabaciones.length > 0 && <Recordings key={def.id} items={def.grabaciones} />}
+      {def.grabaciones && def.grabaciones.length > 0 && <Recordings key={`rec-${def.id}`} items={def.grabaciones} />}
       {ecg && ecg.id !== pathologyId && (
         <button className="btn btn-small" onClick={() => setPathology(ecg.id)}>
           Ver el ECG asociado: {ecg.nombre}
