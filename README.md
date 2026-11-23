@@ -63,6 +63,12 @@ Aplicación educativa para estudiantes de Medicina: muestra el **vector cardíac
   - FVC, FEV1, FEV1/FVC, PEF, FEF25–75 y PIF con el % del teórico, y prueba broncodilatadora;
   - interpretación paso a paso (SEPAR, ATS/ERS, GOLD), con la forma de la curva y el índice de Empey;
   - casos: normal, asma, EPOC, fibrosis, enfermedad neuromuscular, mixto y obstrucción de la vía aérea central (fija, variable extratorácica e intratorácica).
+- **Gasometría arterial** (`src/respiratory/gas.ts`): interpretación paso a paso de los valores que introduzcas:
+  - coherencia (Henderson‑Hasselbalch), acidemia o alcalemia, trastorno primario y compensación esperada (Winter y reglas del Manual MSD);
+  - anión gap corregido por la albúmina y cociente delta; gradiente A‑a y PaO₂/FiO₂;
+  - diagrama ácido‑base (pH frente a HCO₃⁻) con isóbaras de PaCO₂ y bandas de compensación;
+  - 11 casos clínicos (cetoacidosis, diarrea, vómitos, opiáceos, EPOC, ansiedad, TEP, shock séptico, salicilatos…).
+- La sección está marcada como «en revisión» hasta que el autor la revise a fondo.
 
 ### Cardiopatías congénitas
 

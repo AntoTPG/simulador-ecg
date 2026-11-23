@@ -248,3 +248,6 @@ export function QuizPanel() {
     </section>
   );
 }
+
+// Solo en desarrollo (scripts de grabación)
+if (import.meta.env.DEV && typeof window !== 'undefined') (window as unknown as { __quiz: typeof useQuiz }).__quiz = useQuiz;

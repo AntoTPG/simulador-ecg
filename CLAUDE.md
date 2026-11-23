@@ -8,10 +8,10 @@ Instrucciones para Claude (y para cualquier persona) que trabaje en este proyect
   - vector cardíaco en 3D y ECG de 12 derivaciones sincronizado;
   - patologías, diagrama de Wiggers, bucle presión‑volumen y ruidos cardíacos;
   - «Adivina el ECG» (autoevaluación);
-  - respiratorio: mecánica pulmonar, ciclo respiratorio, acino 3D y espirometría (gasometría, en preparación);
+  - respiratorio (marcado «en revisión»): mecánica pulmonar, ciclo respiratorio, acino 3D, espirometría y gasometría;
   - cardiopatías congénitas y pared arterial en corte transversal.
 - Autor y responsable: **Antonio Requena Quesada**, estudiante de Medicina. Lo usan sus compañeros de facultad.
-- Web publicada: https://antotpg.github.io/simulador-ecg/ (repositorio público `AntoTPG/simulador-ecg`).
+- Web publicada: https://antotpg.github.io/simulador-ecg/ y https://simulador-ecg.pages.dev (Cloudflare Pages, futura dirección definitiva). Repositorio público `AntoTPG/simulador-ecg`.
 
 ## Cómo trabajar con Antonio
 
@@ -63,7 +63,7 @@ Para que `git push` pueda abrir la ventana de inicio de sesión de GitHub: `$env
 - `src/pathologies/`: **una patología = un archivo de datos** validado con Zod (`schema.ts`). Se registra solo y aparece en el desplegable. Los archivos que empiezan por `_` son datos compartidos.
 - `src/sounds/`: catálogo de ruidos cardíacos (`catalog.ts`), síntesis de audio (`acoustics.ts`) y reproducción sincronizada (`player.ts`).
 - `src/quiz/`: pestaña «Adivina el ECG» (banco de preguntas en `bank.ts` + ECG estático).
-- `src/respiratory/`: modelo de mecánica pulmonar (`mechanics.ts`), patologías (`catalog.ts`), gráficas, acino 3D, reloj propio (`respClock.ts`) y espirometría (`spirometry.ts` + casos en `spiroCatalog.ts`).
+- `src/respiratory/`: modelo de mecánica pulmonar (`mechanics.ts`), patologías (`catalog.ts`), gráficas, acino 3D, reloj propio (`respClock.ts`) espirometría (`spirometry.ts` + `spiroCatalog.ts`) y gasometría (`gas.ts` + `gasCases.ts`).
 - `src/congenital/`: cardiopatías congénitas (catálogo de datos + esquema SVG).
 - `src/vessels/`: pared arterial en corte transversal (catálogo de datos + dibujo SVG por capas).
 - `src/heart3d/`: escena 3D (react-three-fiber). Corazón procedural con mapa de activación; el contrato para cambiarlo por un glTF está en `models/HeartModel.ts`.

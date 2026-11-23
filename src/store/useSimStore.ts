@@ -189,3 +189,6 @@ export const useSim = create<SimState>()((set, get) => ({
   setAudioOn: (audioOn) => set(audioOn ? { audioOn, speed: 1, playing: true } : { audioOn }),
   setMobileTab: (mobileTab) => set({ mobileTab }),
 }));
+
+// Solo en desarrollo: acceso al estado desde la consola o desde scripts de grabación (no existe en la web publicada)
+if (import.meta.env.DEV && typeof window !== 'undefined') (window as unknown as { __sim: typeof useSim }).__sim = useSim;

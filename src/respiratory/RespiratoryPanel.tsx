@@ -12,6 +12,7 @@ import { respClock, startRespLoop, useRespPlay } from './respClock';
 import { RespCycleChart } from './RespCycleChart';
 import { RespPvChart } from './RespPvChart';
 import { SpirometryPanel } from './SpirometryPanel';
+import { GasPanel } from './GasPanel';
 
 export function RespiratoryPanel() {
   const [id, setId] = useState('normal');
@@ -157,6 +158,7 @@ export function RespiratoryPanel() {
       </div>
     </section>
     <SpirometryPanel />
+    <GasPanel />
     </>
   );
 }

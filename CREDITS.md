@@ -25,6 +25,7 @@
 - Manual MSD (versión para profesionales): «Asma», «Enfermedad pulmonar obstructiva crónica», «Fibrosis pulmonar idiopática», «Síndrome de obesidad‑hipoventilación» y «Generalidades sobre las pruebas de función pulmonar».
 - Espirometría: García‑Río F et al. Normativa SEPAR de espirometría. Arch Bronconeumol, 2013; Graham BL et al. Standardization of spirometry 2019 update (ATS/ERS); Stanojevic S et al. ERS/ATS technical standard on interpretive strategies for routine lung function tests, 2022; Pellegrino R et al. Interpretative strategies for lung function tests (ATS/ERS), 2005; GOLD (EPOC).
 - Los valores «teóricos» de la espirometría son los del sujeto sano del modelo, no ecuaciones de referencia (GLI).
+- Gasometría: Manual MSD (versión para profesionales), «Regulación del equilibrio ácido‑base», «Acidosis metabólica», «Alcalosis metabólica», «Acidosis respiratoria», «Alcalosis respiratoria»; West JB (gradiente A‑a). Casos clínicos de elaboración propia.
 - Modelo y acino 3D de elaboración propia, simplificados y no a escala; valores orientativos.
 
 ## Ruidos cardíacos
