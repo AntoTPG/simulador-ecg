@@ -64,6 +64,9 @@ export default defineConfig(({ mode }) => ({
               // Las grabaciones reales (~6 MB) no se descargan al instalar la app:
               // se guardan en caché la primera vez que se escuchan
               globIgnores: ['**/audio/**'],
+              // Al abrir un archivo (LICENCIAS-TERCEROS.txt, LICENCIA.txt de las grabaciones…)
+              // el service worker NO debe responder con la app: solo las rutas sin extensión son la app
+              navigateFallbackDenylist: [/\/[^/?]+\.[a-z0-9]+$/i],
               maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
               runtimeCaching: [
                 {
