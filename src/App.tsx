@@ -86,7 +86,10 @@ function Footer() {
       <div>Creado por Antonio Requena Quesada con ayuda de Claude Code</div>
       <div className="copyright">
         © {new Date().getFullYear() > 2026 ? `2026–${new Date().getFullYear()}` : 2026} Antonio Requena Quesada. Todos los derechos reservados.
-        Grabaciones de ruidos cardíacos: Univ. de Michigan (CC BY‑SA 4.0).
+        Grabaciones de ruidos cardíacos: Univ. de Michigan (CC BY‑SA 4.0).{' '}
+        <a href="./LICENCIAS-TERCEROS.txt" target="_blank" rel="noopener noreferrer">
+          Licencias de terceros
+        </a>
       </div>
     </footer>
   );

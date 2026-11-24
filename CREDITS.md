@@ -14,6 +14,14 @@
 - Dower GE et al. On deriving the electrocardiogram from vectorcardiographic leads. Clin Cardiol, 1980. (Matriz inversa de Dower.)
 - Frank E. An accurate, clinically practical system for spatial vectorcardiography. Circulation, 1956.
 
+## ECG, patologías y corazón 3D
+- Explicaciones de las patologías de **elaboración propia**, redactadas con palabras propias; los trazados los genera el modelo (simplificados). Para contrastar: Manual MSD (versión para profesionales), «Electrocardiografía»: https://www.msdmanuals.com/es/professional/trastornos-cardiovasculares/pruebas-y-procedimientos-cardiovasculares/electrocardiograf%C3%ADa
+- Segmentación del ventrículo izquierdo: Cerqueira MD et al. Standardized myocardial segmentation and nomenclature for tomographic imaging of the heart (AHA). *Circulation*, 2002.
+- «Adivina el ECG»: preguntas generadas con el propio simulador; no usa ECG reales de terceros.
+
+## Ciclo cardíaco (diagrama de Wiggers)
+- Modelo hemodinámico de elaboración propia, simplificado (Frank‑Starling, Windkessel, acoplamiento electromecánico, patada auricular). Valores orientativos.
+
 ## Bucle presión‑volumen
 - Suga H, Sagawa K, Shoukas AA. Load independence of the instantaneous pressure‑volume ratio of the canine left ventricle and effects of epinephrine and heart rate on the ratio. Circ Res, 1973. (Elastancia telesistólica.)
 - Sunagawa K, Maughan WL, Burkhoff D, Sagawa K. Left ventricular interaction with arterial load studied in isolated canine ventricle. Am J Physiol, 1983. (Elastancia arterial efectiva, Ea.)
@@ -42,5 +50,14 @@
 - Patología: Manual MSD (versión para profesionales), «Arteriosclerosis no ateromatosa», «Generalidades sobre los aneurismas aórticos», «Aneurismas de la aorta torácica» y capítulos de aterosclerosis, disección aórtica, vasculitis y sífilis.
 - Esquemas de elaboración propia, simplificados y no a escala.
 
-## Bibliotecas
-React, three.js, @react-three/fiber, @react-three/drei, Zustand, Zod, Vite y Vitest. Todas tienen licencia MIT.
+## Bibliotecas de código
+React, three.js, @react-three/fiber, @react-three/drei, Zustand, Zod y sus dependencias (84 paquetes): licencias permisivas **MIT, ISC, BSD‑3‑Clause y Apache‑2.0**, todas compatibles con este uso. Sus avisos de copyright y textos de licencia se publican junto a la web en `public/LICENCIAS-TERCEROS.txt` (se regenera con `npm run licencias` y antes de cada build). Herramientas de desarrollo (no van en la web): Vite, Vitest, TypeScript, vite-plugin-pwa.
+
+## Iconos, tipografía e imágenes
+- Iconos de la app y logotipo: de elaboración propia (`scripts/make-icons.mjs`).
+- Tipografía: la del sistema del usuario (no se descargan fuentes externas).
+- Esquemas (congénitas, pared arterial, acino 3D, gráficas): dibujados por código, de elaboración propia. No se usan imágenes de libros ni de otras webs.
+
+## Material promocional (fuera de la web)
+- Vídeo de presentación: música «Business Technology No Copyright», de MiroMaxMusic (compositor: Maksym Myroniuk), en Pixabay, con la Pixabay Content License (uso gratuito, también comercial, sin atribución obligatoria; sin Content ID a fecha de descarga). https://pixabay.com/music/corporate-business-technology-no-copyright-636611/
+- Las entidades y guías citadas (Manual MSD, SEPAR, ATS/ERS, GOLD…) se nombran solo como fuentes; no hay relación ni respaldo por su parte.

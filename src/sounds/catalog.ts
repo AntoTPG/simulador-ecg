@@ -10,7 +10,7 @@
  *
  * Contenido elaborado a partir de:
  *  - Manual MSD (versión para profesionales), «Auscultación cardíaca»:
- *    https://www.msdmanuals.com/es/professional/trastornos-cardiovasculares/abordaje-del-paciente-cardíaco/auscultación-cardíaca
+ *    https://www.msdmanuals.com/es/professional/trastornos-cardiovasculares/abordaje-del-paciente-card%C3%ADaco/auscultaci%C3%B3n-card%C3%ADaca
  *  - Heart Sound and Murmur Library, University of Michigan Medical School
  *    (Judge R., Mangrulkar R., 2015; CC BY‑SA 4.0), con grabaciones reales:
  *    https://hdl.handle.net/2027.42/120554

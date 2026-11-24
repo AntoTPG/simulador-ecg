@@ -3,6 +3,25 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { viteSingleFile } from 'vite-plugin-singlefile';
 import { VitePWA } from 'vite-plugin-pwa';
+import type { Plugin } from 'vite';
+
+/**
+ * Política de seguridad de contenido (CSP) como etiqueta <meta>, solo en la build normal.
+ * Cloudflare Pages ya la envía como cabecera (public/_headers), pero GitHub Pages no
+ * permite cabeceras propias: con la etiqueta, la protección también llega allí.
+ * (En una <meta> no valen frame-ancestors ni upgrade-insecure-requests en todos los
+ * navegadores; eso queda a cargo de las cabeceras de Cloudflare.)
+ */
+const CSP_META =
+  "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob:; font-src 'self' data:; connect-src 'self'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none';"; // el «;» final evita que un añadido externo (p. ej., un antivirus) se pegue a la última regla
+const cspMeta = (): Plugin => ({
+  name: 'csp-meta',
+  apply: 'build',
+  transformIndexHtml: (html) =>
+    html.replace('<meta charset="UTF-8" />', `<meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="${CSP_META}" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />`),
+});
 
 // `base: './'` → rutas relativas: la misma build sirve para cualquier hosting
 // estático (GitHub Pages en una subcarpeta), para Tauri y para Capacitor.
@@ -17,6 +36,7 @@ export default defineConfig(({ mode }) => ({
     ...(mode === 'single'
       ? [viteSingleFile()]
       : [
+          cspMeta(),
           // PWA: instalable en el móvil/escritorio y funciona sin conexión
           VitePWA({
             registerType: 'autoUpdate',

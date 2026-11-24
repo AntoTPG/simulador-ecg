@@ -1,0 +1,15 @@
+# Cabeceras de seguridad para Cloudflare Pages (se copian tal cual a dist/).
+# La web es estática: no carga nada de otros dominios, no tiene formularios que
+# envíen datos ni se debe poder incrustar en otras páginas.
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob:; font-src 'self' data:; connect-src 'self'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), serial=(), bluetooth=(), hid=()
+  Cross-Origin-Opener-Policy: same-origin
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+
+# El service worker siempre se revisa, para que las actualizaciones lleguen enseguida
+/sw.js
+  Cache-Control: no-cache

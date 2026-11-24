@@ -4,3 +4,9 @@ dist-single
 *.log
 .DS_Store
 .vite
+
+# Secretos y configuración local (nunca deben subirse)
+.env
+.env.*
+*.pem
+*.key

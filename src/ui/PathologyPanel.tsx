@@ -93,6 +93,13 @@ export function PathologyPanel() {
           <p key={i}>{t}</p>
         ))}
       </div>
+      <p className="sources small muted">
+        Explicaciones de elaboración propia; trazados generados por el modelo, simplificados. Para contrastar:{' '}
+        <a href="https://www.msdmanuals.com/es/professional/trastornos-cardiovasculares/pruebas-y-procedimientos-cardiovasculares/electrocardiograf%C3%ADa" target="_blank" rel="noopener noreferrer">
+          Manual MSD, «Electrocardiografía»
+        </a>
+        . Segmentos del VI: modelo de 17 segmentos de la AHA (Cerqueira MD et al., <i>Circulation</i>, 2002).
+      </p>
     </section>
   );
 }

@@ -1,0 +1,14 @@
+# Avisa (con una propuesta de cambio) cuando hay actualizaciones de seguridad
+# de las dependencias o de las acciones de GitHub. No publica nada por sí solo:
+# cada propuesta hay que revisarla y aceptarla a mano.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 5
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly

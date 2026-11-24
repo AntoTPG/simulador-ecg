@@ -11,6 +11,10 @@
  *   x = izquierda, y = inferior (pies), z = anterior (esternón).
  */
 import { z } from 'zod';
+
+// Sin compilación «JIT» de validadores: Zod 4 intenta usar `new Function`, que la
+// política de seguridad (CSP) de la web prohíbe. Así no lo intenta y no hay avisos.
+z.config({ jitless: true });
 import { EXTRA_LEAD_NAMES, LEAD_NAMES } from '../config/leads';
 
 const vec3 = z.tuple([z.number(), z.number(), z.number()]);

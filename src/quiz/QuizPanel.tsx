@@ -245,6 +245,7 @@ export function QuizPanel() {
         </div>
       )}
       <p className="small muted quiz-foot">Teclado: 1–4 para responder · Intro para el siguiente.</p>
+      <p className="sources small muted">Los ECG los genera el propio simulador (simplificados): sirven para practicar el razonamiento, no sustituyen a ECG reales.</p>
     </section>
   );
 }

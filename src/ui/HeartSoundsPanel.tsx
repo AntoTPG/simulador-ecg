@@ -113,16 +113,16 @@ export function HeartSoundsPanel() {
       )}
       <p className="sources small muted">
         «Escuchar» reproduce un sonido sintetizado con el modelo y sincronizado con la animación (mejor con auriculares). Contenido basado en el{' '}
-        <a href="https://www.msdmanuals.com/es/professional/trastornos-cardiovasculares/abordaje-del-paciente-card%C3%ADaco/auscultaci%C3%B3n-card%C3%ADaca" target="_blank" rel="noreferrer">
+        <a href="https://www.msdmanuals.com/es/professional/trastornos-cardiovasculares/abordaje-del-paciente-card%C3%ADaco/auscultaci%C3%B3n-card%C3%ADaca" target="_blank" rel="noopener noreferrer">
           Manual MSD, «Auscultación cardíaca»
         </a>
 
         . Grabaciones reales: Judge R., Mangrulkar R.,{' '}
-        <a href="https://hdl.handle.net/2027.42/120554" target="_blank" rel="noreferrer">
+        <a href="https://hdl.handle.net/2027.42/120554" target="_blank" rel="noopener noreferrer">
           Heart Sound and Murmur Library
         </a>{' '}
         (University of Michigan Medical School, 2015),{' '}
-        <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.es" target="_blank" rel="noreferrer">
+        <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.es" target="_blank" rel="noopener noreferrer">
           CC BY‑SA 4.0
         </a>
         ; recortadas a 30 s y recodificadas.

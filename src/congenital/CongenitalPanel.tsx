@@ -100,7 +100,7 @@ export function CongenitalPanel() {
             <a
               href="https://www.msdmanuals.com/es/professional/pediatr%C3%ADa/anomal%C3%ADas-cardiovasculares-cong%C3%A9nitas/generalidades-sobre-las-anomal%C3%ADas-cardiovasculares-cong%C3%A9nitas"
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
             >
               Manual MSD, «Anomalías cardiovasculares congénitas»
             </a>

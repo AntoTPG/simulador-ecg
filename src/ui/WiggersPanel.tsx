@@ -346,6 +346,10 @@ export function WiggersPanel() {
         </span>
         <span className="muted">CM/AM: cierre/apertura mitral · AA/CA: apertura/cierre aórtico</span>
       </div>
+      <p className="sources small muted">
+        Modelo hemodinámico de elaboración propia, simplificado, con las relaciones clásicas de la fisiología cardiovascular (Frank‑Starling, Windkessel, acoplamiento
+        electromecánico). Valores orientativos.
+      </p>
     </section>
   );
 }

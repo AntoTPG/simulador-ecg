@@ -31,10 +31,19 @@ Instrucciones para Claude (y para cualquier persona) que trabaje en este proyect
 - Grabaciones de `public/audio/michigan/`: **CC BY‑SA 4.0** (Universidad de Michigan). Hay que citarlas siempre, mantener `LICENCIA.txt` y anotar ahí cualquier cambio que se les haga.
 - Las fuentes y créditos van en `CREDITS.md`.
 
+## Seguridad y licencias (auditoría de noviembre de 2026)
+
+- La web es estática y no carga NADA de otros dominios. La política de seguridad (CSP) está en `public/_headers` (cabeceras de Cloudflare Pages) y en `vite.config.ts` (etiqueta `<meta>` para GitHub Pages). Si algún día hace falta un recurso externo (fuente, CDN, analítica), hay que añadirlo en los dos sitios y volver a probar.
+- No usar `innerHTML` con datos que no sean nuestros, ni `eval`/`new Function`. Zod va en modo `jitless` por la CSP.
+- Antes de publicar: `npm audit` sin vulnerabilidades (el workflow corta si hay alguna alta en producción).
+- `public/LICENCIAS-TERCEROS.txt` recoge los avisos de copyright de las bibliotecas; se regenera solo antes de cada build (`npm run licencias`).
+- Toda fuente usada se cita en la interfaz y en `CREDITS.md`. Textos con palabras propias: se comprobó con un cotejo automático contra el Manual MSD (0 frases idénticas de 8 o más palabras).
+- Nunca subir secretos: `.env` y claves están en `.gitignore`.
+
 ## Comandos
 
 ```powershell
-npm install          # dependencias (Node 20+)
+npm install          # dependencias (Node 20.19+ o 22)
 npm run dev          # servidor local en http://localhost:5173
 npm test             # tests (Vitest): deben pasar SIEMPRE antes de publicar
 npx tsc --noEmit     # comprobación de tipos
@@ -47,7 +56,7 @@ Para que `git push` pueda abrir la ventana de inicio de sesión de GitHub: `$env
 
 ## Publicación
 
-- Cada push a `main` ejecuta `.github/workflows/deploy.yml`: tests → build → GitHub Pages. Tarda alrededor de 1 minuto.
+- Cada push a `main` ejecuta `.github/workflows/deploy.yml`: auditoría de dependencias → tests → build → GitHub Pages. Cloudflare Pages se despliega a la vez por su cuenta. Tarda alrededor de 1 minuto.
 - Si un test falla, no se publica.
 - Tras publicar, comprueba en https://github.com/AntoTPG/simulador-ecg/actions que el despliegue terminó bien.
 - Mensajes de commit en español.

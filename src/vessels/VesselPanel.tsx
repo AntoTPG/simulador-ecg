@@ -140,11 +140,11 @@ export function VesselPanel() {
       )}
       <p className="sources small muted">
         Fuentes: Ross y Pawlina, <i>Histología</i> (sistema cardiovascular) y Manual MSD:{' '}
-        <a href="https://www.msdmanuals.com/es/professional/trastornos-cardiovasculares/arteriosclerosis/arteriosclerosis-no-ateromatosa" target="_blank" rel="noreferrer">
+        <a href="https://www.msdmanuals.com/es/professional/trastornos-cardiovasculares/arteriosclerosis/arteriosclerosis-no-ateromatosa" target="_blank" rel="noopener noreferrer">
           arteriosclerosis no ateromatosa
         </a>
         ,{' '}
-        <a href="https://www.msdmanuals.com/es/professional/trastornos-cardiovasculares/enfermedades-de-la-aorta-y-sus-ramas/generalidades-sobre-los-aneurismas-a%C3%B3rticos" target="_blank" rel="noreferrer">
+        <a href="https://www.msdmanuals.com/es/professional/trastornos-cardiovasculares/enfermedades-de-la-aorta-y-sus-ramas/generalidades-sobre-los-aneurismas-a%C3%B3rticos" target="_blank" rel="noopener noreferrer">
           aneurismas aórticos
         </a>{' '}
         y capítulos de aterosclerosis, disección aórtica, vasculitis y sífilis.

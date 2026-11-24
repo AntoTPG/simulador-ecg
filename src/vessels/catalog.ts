@@ -311,7 +311,7 @@ export const PATOLOGIAS_VASO: PatologiaVaso[] = [
       'Las disecciones de la aorta ascendente (tipo A de Stanford) son una emergencia quirúrgica.',
     ],
     capas: {
-      intima: 'Desgarro (puerta de entrada) y colgajo de íntima que separa la luz verdadera de la falsa.',
+      intima: 'Desgarro (puerta de entrada) y un colgajo de íntima que deja a un lado la luz verdadera y al otro la falsa.',
       media: 'Se separa en dos por un hematoma que crea la falsa luz; degeneración mucoide de base.',
     },
     clinica: [
