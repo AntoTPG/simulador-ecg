@@ -6,7 +6,20 @@ import { execSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 
-const dirs = execSync('npm ls --omit=dev --all --parseable', { encoding: 'utf8' }).trim().split(/\r?\n/).slice(1);
+// `npm ls` puede salir con error por avisos sin importancia (p. ej., dependencias opcionales):
+// se aprovecha su salida igualmente. Si no hay salida, se conserva el archivo ya generado y
+// la build NO se detiene (el archivo está en el repositorio).
+let salida = '';
+try {
+  salida = execSync('npm ls --omit=dev --all --parseable', { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
+} catch (e) {
+  salida = e.stdout?.toString() ?? '';
+}
+if (!salida.trim()) {
+  console.warn('licencias: no se pudo listar las dependencias; se mantiene public/LICENCIAS-TERCEROS.txt');
+  process.exit(0);
+}
+const dirs = salida.trim().split(/\r?\n/).slice(1);
 const vistos = new Map();
 for (const d of dirs) {
   let pkg;
