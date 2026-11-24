@@ -1,8 +1,15 @@
-# Simulador ECG 3D
+# FisioVisual
+
+*Fisiología interactiva para estudiantes de Medicina (antes «Simulador ECG 3D»).*
 
 **🌐 Úsala online:** https://antotpg.github.io/simulador-ecg/
 
-Aplicación educativa para estudiantes de Medicina: muestra el **vector cardíaco en 3D** dentro de un corazón, los **ejes de las 12 derivaciones** a su alrededor y el **ECG de 12 derivaciones** sincronizado en papel milimetrado (25 mm/s, 10 mm/mV).
+Aplicación educativa de **fisiología interactiva** para estudiantes de Medicina. Reúne:
+- **Simulador ECG 3D**: el vector cardíaco en 3D dentro de un corazón, los ejes de las 12 derivaciones y el ECG de 12 derivaciones sincronizado en papel milimetrado (25 mm/s, 10 mm/mV), con 25 patologías;
+- el **ciclo cardíaco** (Wiggers, bucle presión‑volumen y ruidos cardíacos);
+- **«Adivina el ECG»** para autoevaluarse;
+- **respiratorio**: mecánica, acino 3D, espirometría y gasometría;
+- **anatomía**: cardiopatías congénitas y pared arterial.
 
 > ⚠️ **Herramienta educativa y simplificada. No apta para uso clínico ni para diagnóstico.**
 

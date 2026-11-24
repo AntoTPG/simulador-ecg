@@ -1,4 +1,4 @@
-LICENCIAS DE TERCEROS · Simulador ECG 3D
+LICENCIAS DE TERCEROS · FisioVisual
 ==========================================
 La web incluye las siguientes bibliotecas de código abierto. Cada una conserva su
 licencia y su aviso de copyright, que se reproducen a continuación.

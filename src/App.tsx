@@ -108,8 +108,8 @@ function Header({ fc = true }: { fc?: boolean }) {
           </svg>
         </span>
         <div>
-          <h1>Simulador ECG 3D</h1>
-          <p className="brand-sub">Vector cardíaco · 12 derivaciones</p>
+          <h1>FisioVisual</h1>
+          <p className="brand-sub">Fisiología interactiva · Medicina</p>
         </div>
       </div>
       <p className="disclaimer" role="note">
@@ -193,7 +193,7 @@ function AudioSync() {
 }
 
 const SECCIONES: { k: Seccion; label: string; icon: string }[] = [
-  { k: 'simulador', label: 'Simulador ECG', icon: '∿' },
+  { k: 'simulador', label: 'Simulador ECG 3D', icon: '∿' },
   { k: 'quiz', label: 'Adivina el ECG', icon: '?' },
   { k: 'respiratorio', label: 'Respiratorio', icon: '🫁' },
   { k: 'congenitas', label: 'Cardiopatías congénitas', icon: '⧉' },

@@ -36,7 +36,7 @@ for (const d of dirs) {
   vistos.set(id, { lic, textos });
 }
 const orden = [...vistos.keys()].sort();
-let out = `LICENCIAS DE TERCEROS · Simulador ECG 3D
+let out = `LICENCIAS DE TERCEROS · FisioVisual
 ==========================================
 La web incluye las siguientes bibliotecas de código abierto. Cada una conserva su
 licencia y su aviso de copyright, que se reproducen a continuación.

@@ -42,9 +42,9 @@ export default defineConfig(({ mode }) => ({
             registerType: 'autoUpdate',
             includeAssets: ['icons/apple-touch-icon.png'],
             manifest: {
-              name: 'Simulador ECG 3D',
-              short_name: 'ECG 3D',
-              description: 'Simulador educativo del vector cardíaco en 3D y del ECG de 12 derivaciones',
+              name: 'FisioVisual · Fisiología interactiva',
+              short_name: 'FisioVisual',
+              description: 'Fisiología interactiva para estudiantes de Medicina: vector cardíaco y ECG de 12 derivaciones en 3D, ciclo cardíaco, respiratorio, anatomía y autoevaluación',
               lang: 'es-ES',
               start_url: './',
               scope: './',

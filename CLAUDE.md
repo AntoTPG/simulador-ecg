@@ -1,10 +1,10 @@
-# CLAUDE.md — Simulador ECG 3D
+# CLAUDE.md — FisioVisual (antes «Simulador ECG 3D»)
 
 Instrucciones para Claude (y para cualquier persona) que trabaje en este proyecto.
 
 ## El proyecto
 
-- Aplicación web **educativa** para estudiantes de Medicina. Incluye:
+- **FisioVisual**: aplicación web **educativa** de fisiología interactiva para estudiantes de Medicina (el nombre «Simulador ECG 3D» se mantiene para el módulo del corazón). Incluye:
   - vector cardíaco en 3D y ECG de 12 derivaciones sincronizado;
   - patologías, diagrama de Wiggers, bucle presión‑volumen y ruidos cardíacos;
   - «Adivina el ECG» (autoevaluación);
