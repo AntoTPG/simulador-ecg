@@ -84,6 +84,54 @@ export function gastoCardiaco(p: GuytonParams, pvc: number) {
   return (13 * p.funcionCardiaca) / (1 + Math.exp(-(transmural - 0.634) / 1.354));
 }
 
+// ---------------------------------------------------------------------------
+//  Reparto del volumen entre compartimentos
+// ---------------------------------------------------------------------------
+// El volumen total y la Pmll no cambian con la función cardíaca, la resistencia
+// venosa o la presión intratorácica, pero SÍ cambia dónde está la sangre:
+//  - las arterias son ~50 veces menos distensibles que las venas: con muy poco
+//    volumen su presión sube mucho (PAM ≈ 93 mmHg con ~0,17 L «tensados»);
+//  - las venas periféricas son el gran depósito (~3 L): un cambio de 100–200 mL
+//    apenas mueve su presión (≈ 7 mmHg, cerca de la Pmll);
+//  - el compartimento venoso central (venas cavas del tórax + AD, ~100 mL)
+//    cambia de volumen con la PVC y con la presión intratorácica (lo que cuenta
+//    es la presión de distensión = PVC − presión intratorácica).
+// Volumen tensado total = Ca·PAM + Cv·Pvp + Cc·(PVC − Pit)  →  se despeja la Pvp.
+// El resto de la sangre (~1,2 L en pulmones y cavidades cardíacas) se supone constante.
+
+/** Compliancias de cada compartimento (L/mmHg). La suma es la de todo el sistema. */
+export const C_ARTERIAL = 0.0018;
+export const C_CENTRAL = 0.016;
+/** Volúmenes «no tensados» de referencia (L): arterias, venas periféricas y centrales. */
+const V0_ART = 0.58;
+const V0_CEN = 0.1;
+
+export interface Distribucion {
+  /** Presión venosa periférica real (mmHg): próxima a la Pmll, pero no idéntica. */
+  pvp: number;
+  /** Volúmenes (L). */
+  vArterial: number;
+  vPeriferico: number;
+  vCentral: number;
+}
+
+/** Reparto del volumen para unas PVC y PAM dadas (en equilibrio o durante una transición). */
+export function distribucion(p: GuytonParams, pvc: number, pam: number): Distribucion {
+  const cTotal = COMPLIANCIA_SISTEMA / (1 + 0.35 * (p.tonoVenoso - 1));
+  const cVenosa = cTotal - C_ARTERIAL - C_CENTRAL; // el tono venoso actúa sobre las venas periféricas
+  const tensado = pmll(p) * cTotal;
+  const transmuralCentral = pvc - p.intratoracica;
+  const pvp = (tensado - C_ARTERIAL * pam - C_CENTRAL * transmuralCentral) / cVenosa;
+  const vArterial = V0_ART + C_ARTERIAL * pam;
+  const vCentral = V0_CEN + C_CENTRAL * transmuralCentral;
+  // Lo que no está en arterias ni en venas centrales está en las periféricas (≈ 3 L en reposo)
+  const vPeriferico = p.volemia - 1.2 - vArterial - vCentral;
+  return { pvp, vArterial, vPeriferico, vCentral };
+}
+
+/** Presión arterial media para un gasto y una PVC: PAM = GC × RPT + PVC. */
+export const pamDe = (p: GuytonParams, gc: number, pvc: number) => gc * p.rpt + pvc;
+
 /** Punto de equilibrio (GC = RV) por bisección. */
 export function equilibrio(p: GuytonParams) {
   let a = -8;

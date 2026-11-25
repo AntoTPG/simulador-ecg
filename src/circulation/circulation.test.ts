@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { CASOS_GUYTON, equilibrio, gastoCardiaco, getCasoGuyton, GUYTON_NORMAL, pasoPvc, pmll, retornoVenoso } from './guyton';
+import { CASOS_GUYTON, distribucion, equilibrio, gastoCardiaco, getCasoGuyton, GUYTON_NORMAL, pasoPvc, pmll, retornoVenoso } from './guyton';
 import { hemodinamica, MMHG_POR_CM, presiones, riesgoSincope } from './gravity';
 import { balance, CASOS_STARLING, getCasoStarling, presionNeta, puntoDeCambio, STARLING_NORMAL } from './starling';
 
@@ -61,6 +61,39 @@ describe('Guyton: curvas y equilibrio', () => {
   });
   it('todos los casos tienen un equilibrio sin NaN', () => {
     for (const c of CASOS_GUYTON) for (const e of c.etapas) expect(Number.isFinite(equilibrio(e.params).gc), c.id).toBe(true);
+  });
+});
+
+describe('Guyton: reparto del volumen entre compartimentos', () => {
+  const reparto = (p: Parameters<typeof equilibrio>[0]) => {
+    const e = equilibrio(p);
+    return distribucion(p, e.pvc, e.pam);
+  };
+  const n = reparto(GUYTON_NORMAL);
+  it('reposo: ~3 L en venas periféricas, ~100 mL en el compartimento central y Pvp ≈ Pmll', () => {
+    expect(n.vPeriferico).toBeCloseTo(2.95, 1);
+    expect(n.vCentral * 1000).toBeCloseTo(100, -1);
+    expect(n.pvp).toBeGreaterThan(6);
+    expect(n.pvp).toBeLessThan(7.2);
+  });
+  it('el volumen total se conserva aunque cambie el corazón, la resistencia o la respiración', () => {
+    const total = (d: typeof n) => d.vArterial + d.vPeriferico + d.vCentral;
+    for (const c of [{ funcionCardiaca: 0.3 }, { rrv: 2.2 }, { intratoracica: -3 }])
+      expect(total(reparto({ ...GUYTON_NORMAL, ...c }))).toBeCloseTo(total(n), 6);
+  });
+  it('si falla el corazón, la sangre pasa de las arterias al lado venoso', () => {
+    const ic = reparto(getCasoGuyton('ic').etapas[1].params);
+    expect(ic.vArterial).toBeLessThan(n.vArterial - 0.05);
+    expect(ic.vCentral).toBeGreaterThan(n.vCentral + 0.04);
+    expect(ic.vPeriferico).toBeGreaterThan(n.vPeriferico);
+  });
+  it('inspiración: el tórax toma sangre de las venas periféricas (bomba respiratoria)', () => {
+    expect(reparto({ ...GUYTON_NORMAL, intratoracica: -2 }).vPeriferico).toBeLessThan(n.vPeriferico - 0.02);
+  });
+  it('más resistencia venosa: la sangre se queda embalsada en las venas periféricas', () => {
+    const r = reparto({ ...GUYTON_NORMAL, rrv: 2.2 });
+    expect(r.vPeriferico).toBeGreaterThan(n.vPeriferico + 0.03);
+    expect(r.pvp).toBeGreaterThan(n.pvp);
   });
 });
 

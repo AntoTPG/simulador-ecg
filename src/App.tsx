@@ -236,17 +236,65 @@ function SectionNav() {
   );
 }
 
+/** Móvil: pestañas fijas en la barra inferior (las del simulador del corazón)… */
 const TABS: { k: MobileTab; label: string; icon: string }[] = [
   { k: '3d', label: 'Corazón', icon: '♥' },
   { k: 'ecg', label: 'ECG', icon: '∿' },
   { k: 'ciclo', label: 'Ciclo', icon: '🩺' },
   { k: 'patologia', label: 'Patología', icon: '☰' },
-  { k: 'quiz', label: 'Adivina', icon: '?' },
-  { k: 'respiratorio', label: 'Resp.', icon: '🫁' },
-  { k: 'circulacion', label: 'Circ.', icon: '⟳' },
-  { k: 'congenitas', label: 'Congénitas', icon: '⧉' },
-  { k: 'histologia', label: 'Histología', icon: '◎' },
 ];
+/** …y el resto de secciones, en el menú desplegable «Más». */
+const TABS_MAS: { k: MobileTab; label: string; icon: string }[] = [
+  { k: 'quiz', label: 'Adivina el ECG', icon: '?' },
+  { k: 'respiratorio', label: 'Respiratorio', icon: '🫁' },
+  { k: 'circulacion', label: 'Circulación', icon: '⟳' },
+  { k: 'congenitas', label: 'Cardiopatías congénitas', icon: '⧉' },
+  { k: 'histologia', label: 'Histología y patología', icon: '◎' },
+];
+
+/** Barra inferior del móvil con menú desplegable «Más» para no amontonar pestañas. */
+function MobileNav({ tab, setTab }: { tab: MobileTab; setTab: (t: MobileTab) => void }) {
+  const [abierto, setAbierto] = useState(false);
+  const enMas = TABS_MAS.find((t) => t.k === tab);
+  const elegir = (t: MobileTab) => {
+    setTab(t);
+    setAbierto(false);
+  };
+  return (
+    <>
+      {abierto && <div className="mas-fondo" onClick={() => setAbierto(false)} aria-hidden />}
+      {abierto && (
+        <div className="mas-menu" role="menu" aria-label="Más secciones">
+          {TABS_MAS.map((t) => (
+            <button key={t.k} role="menuitem" className={`mas-item${tab === t.k ? ' is-on' : ''}`} onClick={() => elegir(t.k)}>
+              <span aria-hidden>{t.icon}</span>
+              {t.label}
+            </button>
+          ))}
+        </div>
+      )}
+      <nav className="tabs" role="tablist">
+        {TABS.map((t) => (
+          <button key={t.k} role="tab" aria-selected={tab === t.k} className={`tab${tab === t.k ? ' is-on' : ''}`} onClick={() => elegir(t.k)}>
+            <span aria-hidden>{t.icon}</span>
+            {t.label}
+          </button>
+        ))}
+        <button
+          role="tab"
+          aria-selected={!!enMas}
+          aria-haspopup="menu"
+          aria-expanded={abierto}
+          className={`tab${enMas ? ' is-on' : ''}`}
+          onClick={() => setAbierto((v) => !v)}
+        >
+          <span aria-hidden>{enMas ? enMas.icon : '⋯'}</span>
+          {enMas ? enMas.label.split(' ')[0] : 'Más'} {abierto ? '▾' : '▴'}
+        </button>
+      </nav>
+    </>
+  );
+}
 
 export default function App() {
   const mobile = useIsMobile();
@@ -325,14 +373,7 @@ export default function App() {
           )}
         </main>
         {!FUERA_DEL_SIMULADOR.includes(tab) && <Controls />}
-        <nav className="tabs" role="tablist">
-          {TABS.map((t) => (
-            <button key={t.k} role="tab" aria-selected={tab === t.k} className={`tab${tab === t.k ? ' is-on' : ''}`} onClick={() => setTab(t.k)}>
-              <span aria-hidden>{t.icon}</span>
-              {t.label}
-            </button>
-          ))}
-        </nav>
+        <MobileNav tab={tab} setTab={setTab} />
       </div>
     );
   }

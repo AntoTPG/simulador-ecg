@@ -1444,15 +1444,13 @@ input[type='range'] {
   }
 }
 .mobile .tabs {
-  /* 9 pestañas: la barra se desliza de lado si no caben */
-  display: flex;
-  overflow-x: auto;
-  scrollbar-width: none;
-  grid-template-columns: none;
+  /* 4 pestañas fijas + «Más» (menú desplegable) */
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
   gap: 2px;
 }
 .mobile .tab {
-  font-size: 9.5px;
+  font-size: 11px;
   padding: 6px 1px;
   letter-spacing: -0.01em;
 }
@@ -2483,13 +2481,6 @@ input[type='range'] {
   background: color-mix(in srgb, #2563eb 10%, var(--surface));
 }
 
-.mobile .tabs::-webkit-scrollbar {
-  display: none;
-}
-.mobile .tabs .tab {
-  flex: 0 0 auto;
-  min-width: 58px;
-}
 
 /* ===== Circulación ===== */
 .circ-card {
@@ -2730,4 +2721,88 @@ input[type='range'] {
 .mobile .review-notice {
   font-size: 12px;
   padding: 6px 10px;
+}
+
+.circ-explica {
+  padding: 10px 14px;
+  border-radius: 12px;
+  border-left: 5px solid #6366f1;
+  background: color-mix(in srgb, #6366f1 7%, var(--surface));
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+.circ-glosario summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+.circ-glosario-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 8px 24px;
+  margin-top: 10px;
+}
+.circ-glosario dl {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.circ-glosario-item {
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  gap: 8px;
+  font-size: 13px;
+}
+.circ-glosario-item dt {
+  font-weight: 800;
+  color: var(--accent);
+}
+.circ-glosario-item dd {
+  margin: 0;
+}
+
+.mas-fondo {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgba(0, 0, 0, 0.25);
+}
+.mas-menu {
+  position: fixed;
+  right: 10px;
+  bottom: calc(70px + env(safe-area-inset-bottom));
+  z-index: 61;
+  display: flex;
+  flex-direction: column;
+  min-width: 230px;
+  padding: 6px;
+  border-radius: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.35);
+  animation: rise 0.18s ease both;
+}
+.mas-item {
+  font: inherit;
+  font-weight: 600;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 0;
+  border-radius: 10px;
+  background: none;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+}
+.mas-item span {
+  width: 22px;
+  text-align: center;
+  font-size: 17px;
+}
+.mas-item.is-on {
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
 }

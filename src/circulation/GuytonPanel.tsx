@@ -8,7 +8,7 @@
  * la realidad. Así se ve por qué el sistema se autorregula.
  */
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { CASOS_GUYTON, equilibrio, gastoCardiaco, getCasoGuyton, GUYTON_NORMAL, P_COLAPSO, pasoPvc, pmll, retornoVenoso, type GuytonParams } from './guyton';
+import { CASOS_GUYTON, distribucion, equilibrio, gastoCardiaco, getCasoGuyton, GUYTON_NORMAL, P_COLAPSO, pamDe, pasoPvc, pmll, retornoVenoso, type Distribucion, type GuytonParams } from './guyton';
 
 const X0 = -6;
 const X1 = 16;
@@ -19,6 +19,44 @@ const pad = { l: 46, r: 14, t: 12, b: 40 };
 const X = (v: number) => pad.l + ((v - X0) / (X1 - X0)) * (W - pad.l - pad.r);
 const Y = (v: number) => H - pad.b - (v / Y1) * (H - pad.t - pad.b);
 const COL = { gc: '#e11d48', rv: '#2563eb', eq: '#f97316' };
+
+/** Reparto del volumen en reposo, para comparar. */
+const EQ_NORMAL = equilibrio(GUYTON_NORMAL);
+const D_NORMAL = distribucion(GUYTON_NORMAL, EQ_NORMAL.pvc, EQ_NORMAL.pam);
+
+const mL = (l: number) => Math.round(l * 1000).toLocaleString('es-ES');
+const delta = (l: number) => {
+  const v = Math.round(l * 1000);
+  return Math.abs(v) < 5 ? '=' : `${v > 0 ? '+' : '−'}${Math.abs(v)} mL`;
+};
+
+/** Explicación en texto de lo que está pasando ahora mismo, comparado con el reposo. */
+function explicarEstado(d: Distribucion, gc: number, rv: number, pvc: number, pam: number, pm: number) {
+  const frases: string[] = [];
+  const dA = d.vArterial - D_NORMAL.vArterial;
+  const dP = d.vPeriferico - D_NORMAL.vPeriferico;
+  const dC = d.vCentral - D_NORMAL.vCentral;
+  const dif = rv - gc;
+  if (Math.abs(dif) >= 0.15)
+    frases.push(
+      dif > 0
+        ? `Ahora mismo vuelve a la aurícula más sangre (RV ${rv.toFixed(1)} L/min) de la que el corazón saca (GC ${gc.toFixed(1)} L/min): el compartimento central se está llenando y la PVC sube.`
+        : `Ahora mismo el corazón saca más sangre (GC ${gc.toFixed(1)} L/min) de la que vuelve (RV ${rv.toFixed(1)} L/min): el compartimento central se está vaciando y la PVC baja.`,
+    );
+  else frases.push(`Equilibrio: entra en la aurícula lo mismo que sale (≈ ${gc.toFixed(1)} L/min), con una PVC de ${pvc.toFixed(1)} mmHg.`);
+  const cambios: string[] = [];
+  if (Math.abs(dA) >= 0.01) cambios.push(`las arterias tienen ${Math.abs(Math.round(dA * 1000))} mL ${dA > 0 ? 'más' : 'menos'} (PAM ${Math.round(pam)} mmHg)`);
+  if (Math.abs(dC) >= 0.01) cambios.push(`el compartimento venoso central ${Math.abs(Math.round(dC * 1000))} mL ${dC > 0 ? 'más' : 'menos'}`);
+  if (Math.abs(dP) >= 0.01) cambios.push(`las venas periféricas ${Math.abs(Math.round(dP * 1000))} mL ${dP > 0 ? 'más' : 'menos'}`);
+  if (cambios.length) frases.push(`Respecto al reposo, ${cambios.join(', ')}.`);
+  if (Math.abs(pm - 7) < 0.3 && cambios.length)
+    frases.push(
+      'La volemia y el tono venoso no han cambiado, así que la presión media de llenado sigue en ≈ 7 mmHg: la sangre no se ha perdido ni ganado, solo ha cambiado de sitio. Como las venas son muy distensibles, unos mililitros de más o de menos apenas mueven su presión, mientras que en las arterias (rígidas) mueven mucho la PAM.',
+    );
+  else if (pm > 7.3) frases.push(`La presión media de llenado ha subido a ${pm.toFixed(1)} mmHg (más volemia o más tono venoso): la curva de retorno venoso se desplaza a la derecha.`);
+  else if (pm < 6.7) frases.push(`La presión media de llenado ha bajado a ${pm.toFixed(1)} mmHg (menos volemia o venas más relajadas): la curva de retorno venoso se desplaza a la izquierda.`);
+  return frases.join(' ');
+}
 
 function curva(f: (pvc: number) => number) {
   const pts: string[] = [];
@@ -85,11 +123,13 @@ export function GuytonPanel() {
   const diferencia = rvAhora - gcAhora;
   const enEquilibrio = Math.abs(diferencia) < 0.15;
   const pm = pmll(p);
+  const pamAhora = pamDe(p, gcAhora, pvc);
+  const d = distribucion(p, pvc, pamAhora);
 
-  // Niveles del esquema (0–1)
-  const nivelArt = Math.min(1, Math.max(0.05, eq.pam / 160));
-  const nivelVen = Math.min(1, Math.max(0.05, (pm + 2) / 24));
-  const nivelCen = Math.min(1, Math.max(0.06, (pvc + 5) / 16));
+  // Niveles del esquema (0–1), según el VOLUMEN de cada compartimento
+  const nivelArt = Math.min(1, Math.max(0.05, pamAhora / 160));
+  const nivelVen = Math.min(1, Math.max(0.05, (d.vPeriferico - 2.2) / 1.8));
+  const nivelCen = Math.min(1, Math.max(0.06, (d.vCentral - 0.04) / 0.22));
   const vel = Math.max(0.3, eq.gc / 5); // velocidad del flujo en el esquema
   /** Grosor de las flechas de flujo (px), proporcional a los L/min. */
   const anchoFlujo = (q: number) => Math.min(20, 2 + 1.5 * Math.max(0, q));
@@ -246,11 +286,11 @@ export function GuytonPanel() {
             <path d="M48 40 H116 Q130 40 130 54 V78 Q130 92 116 92 H70 V130 Q70 136 64 136 H46 Q40 136 40 130 V92 Q34 92 34 80 V54 Q34 40 48 40 Z" className="circ-tank cen" />
             <rect x="34" y={136 - 96 * nivelCen} width="96" height={96 * nivelCen} fill="#6366f1" opacity={0.8} clipPath="url(#tq-cen)" />
             <line x1="40" x2="70" y1="92" y2="92" stroke="#4f46e5" strokeDasharray="3 3" />
-            <text x="102" y="60" textAnchor="middle" className="circ-tank-t">
-              AD
+            <text x="100" y="58" textAnchor="middle" className="circ-tank-t">
+              AD · PVC {f1(pvc)}
             </text>
-            <text x="102" y="78" textAnchor="middle" className="circ-tank-v">
-              PVC {f1(pvc)}
+            <text x="100" y="74" textAnchor="middle" className="circ-note">
+              {mL(d.vCentral)} mL ({delta(d.vCentral - D_NORMAL.vCentral)})
             </text>
             <text x="76" y="132" className="circ-note">
               venas cavas
@@ -280,7 +320,13 @@ export function GuytonPanel() {
               Arterias
             </text>
             <text x="344" y="114" textAnchor="middle" className="circ-tank-v">
-              PAM {Math.round(eq.pam)}
+              PAM {Math.round(pamAhora)}
+            </text>
+            <text x="344" y="52" textAnchor="middle" className="circ-note">
+              {mL(d.vArterial)} mL
+            </text>
+            <text x="344" y="66" textAnchor="middle" className="circ-note">
+              ({delta(d.vArterial - D_NORMAL.vArterial)})
             </text>
 
             {/* Capilares */}
@@ -292,8 +338,11 @@ export function GuytonPanel() {
             {/* Venas periféricas */}
             <rect x="150" y="196" width="150" height="76" rx="14" className="circ-tank" />
             <rect x="150" y={196 + 76 * (1 - nivelVen)} width="150" height={76 * nivelVen} fill="#2563eb" opacity={0.7} clipPath="url(#tq-ven)" />
-            <text x="225" y="226" textAnchor="middle" className="circ-tank-v">
-              Pvp ≈ Pmll {f1(pm)}
+            <text x="225" y="222" textAnchor="middle" className="circ-tank-v">
+              Pvp {f1(d.pvp)} · Pmll {f1(pm)}
+            </text>
+            <text x="225" y="240" textAnchor="middle" className="circ-tank-v">
+              {d.vPeriferico.toFixed(2).replace('.', ',')} L ({delta(d.vPeriferico - D_NORMAL.vPeriferico)})
             </text>
             <text x="225" y="290" textAnchor="middle" className="circ-tank-t">
               Venas periféricas (~3 L)
@@ -311,25 +360,33 @@ export function GuytonPanel() {
             </text>
           </svg>
           <div className="pv-metrics">
-            <div>
-              <span>Gasto cardíaco</span>
+            <div title="GC: gasto cardíaco, lo que bombea el corazón">
+              <span>GC</span>
               <b>{f1(gcAhora)}</b> L/min
             </div>
-            <div>
-              <span>Retorno venoso</span>
+            <div title="RV: retorno venoso, lo que vuelve a la aurícula derecha">
+              <span>RV</span>
               <b>{f1(rvAhora)}</b> L/min
             </div>
-            <div>
+            <div title="PVC: presión venosa central = presión en la aurícula derecha = presión de llenado (precarga)">
               <span>PVC</span>
               <b>{f1(pvc)}</b> mmHg
             </div>
-            <div title="Presión media de llenado circulatorio">
+            <div title="Volumen del compartimento venoso central: venas cavas del tórax + aurícula derecha">
+              <span>Vol. venoso central</span>
+              <b>{mL(d.vCentral)}</b> mL
+            </div>
+            <div title="Pmll: presión media de llenado circulatorio (con el corazón parado)">
               <span>Pmll</span>
               <b>{f1(pm)}</b> mmHg
             </div>
-            <div title="Presión arterial media (estimada)">
+            <div title="Pvp: presión venosa periférica (≈ Pmll)">
+              <span>Pvp</span>
+              <b>{f1(d.pvp)}</b> mmHg
+            </div>
+            <div title="PAM: presión arterial media = GC × RPT + PVC">
               <span>PAM</span>
-              <b>{Math.round(eq.pam)}</b> mmHg
+              <b>{Math.round(pamAhora)}</b> mmHg
             </div>
           </div>
         </div>
@@ -347,6 +404,9 @@ export function GuytonPanel() {
         ))}
       </div>
 
+      <div className="circ-explica" aria-live="polite">
+        <b>¿Qué está pasando?</b> {explicarEstado(d, gcAhora, rvAhora, pvc, pamAhora, pm)}
+      </div>
       <p className="pv-text">
         {manual
           ? 'Ajuste manual. Recuerda: la volemia y el tono venoso mueven la curva de retorno venoso (cambian la presión media de llenado); la contractilidad mueve la de gasto cardíaco. La PVC acaba siempre donde se cortan.'

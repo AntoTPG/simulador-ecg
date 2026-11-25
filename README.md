@@ -80,7 +80,7 @@ Aplicación educativa de **fisiología interactiva** para estudiantes de Medicin
 
 ### Circulación (en revisión)
 
-- **Retorno venoso y gasto cardíaco** (`src/circulation/guyton.ts`): gráfico de Guyton interactivo con las curvas de función cardíaca y de retorno venoso, la presión media de llenado circulatorio y el punto de equilibrio. La PVC evoluciona en el tiempo hacia el equilibrio (autorregulación). Esquema animado del circuito. Casos: transfusión, hemorragia, ejercicio, insuficiencia cardíaca paso a paso (A → B → C → D), venodilatación e inspiración.
+- **Retorno venoso y gasto cardíaco** (`src/circulation/guyton.ts`): gráfico de Guyton interactivo con las curvas de función cardíaca y de retorno venoso, la presión media de llenado circulatorio y el punto de equilibrio. La PVC evoluciona en el tiempo hacia el equilibrio (autorregulación). Esquema animado del circuito con el reparto del volumen entre arterias, venas periféricas y compartimento venoso central (venas cavas + AD), explicación en texto de lo que ocurre y glosario de abreviaturas. Casos: transfusión, hemorragia, ejercicio, insuficiencia cardíaca paso a paso (A → B → C → D), venodilatación e inspiración.
 - **Gravedad y postura** (`gravity.ts`): presiones arteriales y venosas a lo largo del cuerpo (0,77 mmHg/cm), paso de tumbado a de pie con acumulación venosa, hipotensión ortostática, barorreflejo y bomba muscular; principio de Bernoulli.
 - **Intercambio capilar** (`starling.ts`): fuerzas de Starling a lo largo del capilar, filtración y absorción, drenaje linfático y edema (insuficiencia cardíaca, hipoproteinemia, histamina, linfedema, hemorragia).
 
