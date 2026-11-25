@@ -81,6 +81,18 @@ function MigrationNotice() {
   );
 }
 
+/** Aviso permanente: la versión publicada está en revisión (no se puede cerrar). */
+function ReviewNotice() {
+  return (
+    <div className="review-notice" role="note">
+      <span aria-hidden>🚧</span>
+      <span>
+        <b>Versión en revisión.</b> Esta versión publicada todavía se está revisando y <b>no es la definitiva</b>: puede contener errores o cambiar.
+      </span>
+    </div>
+  );
+}
+
 function Footer() {
   return (
     <footer className="app-footer">
@@ -258,6 +270,7 @@ export default function App() {
       <div className="app mobile">
         <AudioSync />
         <Header fc={!FUERA_DEL_SIMULADOR.includes(tab)} />
+        <ReviewNotice />
         <MigrationNotice />
         <main className="mobile-main">
           {tab === '3d' && (
@@ -328,6 +341,7 @@ export default function App() {
     <div className="app desktop">
       <AudioSync />
       <Header fc={seccion === 'simulador'} />
+      <ReviewNotice />
       <MigrationNotice />
       <SectionNav />
       {/* El contenido tiene su propio scroll; la barra de controles queda fija debajo y no tapa nada.

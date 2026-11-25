@@ -2714,3 +2714,20 @@ input[type='range'] {
   font-size: 14px;
   font-weight: 800;
 }
+
+.review-notice {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  padding: 7px 12px;
+  border-radius: 12px;
+  background: var(--warn-bg);
+  color: var(--warn-text);
+  border: 1px solid color-mix(in srgb, #f59e0b 45%, transparent);
+}
+.mobile .review-notice {
+  font-size: 12px;
+  padding: 6px 10px;
+}
