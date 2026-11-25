@@ -16,6 +16,7 @@ import { CongenitalPanel } from './congenital/CongenitalPanel';
 import { VesselPanel } from './vessels/VesselPanel';
 import { QuizPanel } from './quiz/QuizPanel';
 import { RespiratoryPanel } from './respiratory/RespiratoryPanel';
+import { CirculationPanel } from './circulation/CirculationPanel';
 import { audioPositionMs, playLoop, stopAudio } from './sounds/player';
 import { getCycleData } from './sounds/cycleData';
 import { clock } from './store/clock';
@@ -170,7 +171,7 @@ function VectorSection() {
 }
 
 /** Pestañas del móvil que no usan la animación (sin sonido ni barra de reproducción). */
-const FUERA_DEL_SIMULADOR: MobileTab[] = ['quiz', 'respiratorio', 'congenitas', 'histologia'];
+const FUERA_DEL_SIMULADOR: MobileTab[] = ['quiz', 'respiratorio', 'circulacion', 'congenitas', 'histologia'];
 
 /** Arranca, para o resincroniza el sonido según el estado (no dibuja nada). */
 function AudioSync() {
@@ -196,6 +197,7 @@ const SECCIONES: { k: Seccion; label: string; icon: string }[] = [
   { k: 'simulador', label: 'Simulador ECG 3D', icon: '∿' },
   { k: 'quiz', label: 'Adivina el ECG', icon: '?' },
   { k: 'respiratorio', label: 'Respiratorio', icon: '🫁' },
+  { k: 'circulacion', label: 'Circulación', icon: '⟳' },
   { k: 'congenitas', label: 'Cardiopatías congénitas', icon: '⧉' },
   { k: 'histologia', label: 'Histología y patología', icon: '◎' },
 ];
@@ -229,6 +231,7 @@ const TABS: { k: MobileTab; label: string; icon: string }[] = [
   { k: 'patologia', label: 'Patología', icon: '☰' },
   { k: 'quiz', label: 'Adivina', icon: '?' },
   { k: 'respiratorio', label: 'Resp.', icon: '🫁' },
+  { k: 'circulacion', label: 'Circ.', icon: '⟳' },
   { k: 'congenitas', label: 'Congénitas', icon: '⧉' },
   { k: 'histologia', label: 'Histología', icon: '◎' },
 ];
@@ -291,6 +294,11 @@ export default function App() {
               <RespiratoryPanel />
             </div>
           )}
+          {tab === 'circulacion' && (
+            <div className="stack">
+              <CirculationPanel />
+            </div>
+          )}
           {tab === 'histologia' && (
             <div className="stack">
               <VesselPanel />
@@ -348,6 +356,7 @@ export default function App() {
         )}
         {seccion === 'quiz' && <QuizPanel />}
         {seccion === 'respiratorio' && <RespiratoryPanel />}
+        {seccion === 'circulacion' && <CirculationPanel />}
         {seccion === 'congenitas' && <CongenitalPanel />}
         {seccion === 'histologia' && <VesselPanel />}
         <Footer />

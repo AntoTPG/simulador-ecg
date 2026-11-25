@@ -9,6 +9,7 @@ Aplicación educativa de **fisiología interactiva** para estudiantes de Medicin
 - el **ciclo cardíaco** (Wiggers, bucle presión‑volumen y ruidos cardíacos);
 - **«Adivina el ECG»** para autoevaluarse;
 - **respiratorio**: mecánica, acino 3D, espirometría y gasometría;
+- **circulación**: retorno venoso y gasto cardíaco (gráfico de Guyton), gravedad y postura, e intercambio capilar (fuerzas de Starling y edema);
 - **anatomía**: cardiopatías congénitas y pared arterial.
 
 > ⚠️ **Herramienta educativa y simplificada. No apta para uso clínico ni para diagnóstico.**
@@ -76,6 +77,12 @@ Aplicación educativa de **fisiología interactiva** para estudiantes de Medicin
   - diagrama ácido‑base (pH frente a HCO₃⁻) con isóbaras de PaCO₂ y bandas de compensación;
   - 11 casos clínicos (cetoacidosis, diarrea, vómitos, opiáceos, EPOC, ansiedad, TEP, shock séptico, salicilatos…).
 - La sección está marcada como «en revisión» hasta que el autor la revise a fondo.
+
+### Circulación (en revisión)
+
+- **Retorno venoso y gasto cardíaco** (`src/circulation/guyton.ts`): gráfico de Guyton interactivo con las curvas de función cardíaca y de retorno venoso, la presión media de llenado circulatorio y el punto de equilibrio. La PVC evoluciona en el tiempo hacia el equilibrio (autorregulación). Esquema animado del circuito. Casos: transfusión, hemorragia, ejercicio, insuficiencia cardíaca paso a paso (A → B → C → D), venodilatación e inspiración.
+- **Gravedad y postura** (`gravity.ts`): presiones arteriales y venosas a lo largo del cuerpo (0,77 mmHg/cm), paso de tumbado a de pie con acumulación venosa, hipotensión ortostática, barorreflejo y bomba muscular; principio de Bernoulli.
+- **Intercambio capilar** (`starling.ts`): fuerzas de Starling a lo largo del capilar, filtración y absorción, drenaje linfático y edema (insuficiencia cardíaca, hipoproteinemia, histamina, linfedema, hemorragia).
 
 ### Cardiopatías congénitas
 

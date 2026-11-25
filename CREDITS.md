@@ -36,6 +36,11 @@
 - Gasometría: Manual MSD (versión para profesionales), «Regulación del equilibrio ácido‑base», «Acidosis metabólica», «Alcalosis metabólica», «Acidosis respiratoria», «Alcalosis respiratoria»; West JB (gradiente A‑a). Casos clínicos de elaboración propia.
 - Modelo y acino 3D de elaboración propia, simplificados y no a escala; valores orientativos.
 
+## Circulación
+- Hall JE, Hall ME. *Guyton y Hall. Tratado de fisiología médica*: «Gasto cardíaco, retorno venoso y su regulación» (análisis gráfico de Guyton, presión media de llenado circulatorio) y «La microcirculación y el sistema linfático» (fuerzas de Starling, edema).
+- Herring N, Paterson DJ. *Levick's Introduction to Cardiovascular Physiology*. CRC Press.
+- Modelos, casos y textos de elaboración propia, simplificados; valores orientativos.
+
 ## Ruidos cardíacos
 - Explicaciones elaboradas a partir del **Manual MSD** (versión para profesionales), «Auscultación cardíaca» (Gupta J. I., Shea M. J., rev. abr. 2025): https://www.msdmanuals.com/es/professional/trastornos-cardiovasculares/abordaje-del-paciente-card%C3%ADaco/auscultaci%C3%B3n-card%C3%ADaca
 - **Grabaciones reales y esquemas** (incluidos en `public/audio/michigan/`): Judge R., Mangrulkar R. *Heart Sound and Murmur Library*. University of Michigan Medical School / Open.Michigan, 2015. Licencia **CC BY‑SA 4.0**: https://hdl.handle.net/2027.42/120554. Los MP3 están recortados a 30 s y recodificados a 64 kbps; los esquemas, sin cambios. Estos archivos se redistribuyen con la misma licencia (ver `public/audio/michigan/LICENCIA.txt`).

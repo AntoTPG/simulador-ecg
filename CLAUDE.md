@@ -9,6 +9,7 @@ Instrucciones para Claude (y para cualquier persona) que trabaje en este proyect
   - patologías, diagrama de Wiggers, bucle presión‑volumen y ruidos cardíacos;
   - «Adivina el ECG» (autoevaluación);
   - respiratorio (marcado «en revisión»): mecánica pulmonar, ciclo respiratorio, acino 3D, espirometría y gasometría;
+  - circulación (en revisión): gráfico de Guyton, gravedad y postura, intercambio capilar;
   - cardiopatías congénitas y pared arterial en corte transversal.
 - Autor y responsable: **Antonio Requena Quesada**, estudiante de Medicina. Lo usan sus compañeros de facultad.
 - Web publicada: https://antotpg.github.io/simulador-ecg/ y https://simulador-ecg.pages.dev (Cloudflare Pages, futura dirección definitiva). Repositorio público `AntoTPG/simulador-ecg`.
@@ -73,6 +74,7 @@ Para que `git push` pueda abrir la ventana de inicio de sesión de GitHub: `$env
 - `src/sounds/`: catálogo de ruidos cardíacos (`catalog.ts`), síntesis de audio (`acoustics.ts`) y reproducción sincronizada (`player.ts`).
 - `src/quiz/`: pestaña «Adivina el ECG» (banco de preguntas en `bank.ts` + ECG estático).
 - `src/respiratory/`: modelo de mecánica pulmonar (`mechanics.ts`), patologías (`catalog.ts`), gráficas, acino 3D, reloj propio (`respClock.ts`) espirometría (`spirometry.ts` + `spiroCatalog.ts`) y gasometría (`gas.ts` + `gasCases.ts`).
+- `src/circulation/`: retorno venoso y gasto cardíaco (`guyton.ts`), gravedad y postura (`gravity.ts`), intercambio capilar (`starling.ts`) y sus paneles.
 - `src/congenital/`: cardiopatías congénitas (catálogo de datos + esquema SVG).
 - `src/vessels/`: pared arterial en corte transversal (catálogo de datos + dibujo SVG por capas).
 - `src/heart3d/`: escena 3D (react-three-fiber). Corazón procedural con mapa de activación; el contrato para cambiarlo por un glTF está en `models/HeartModel.ts`.
